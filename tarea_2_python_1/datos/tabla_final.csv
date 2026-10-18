@@ -1,0 +1,26 @@
+﻿ubigeo,departamento,capital,latitud,longitud,lluvia_total_mm,dias_lluvia_fuerte,declaratorias,prorrogas
+01,Amazonas,Chachapoyas,-6.23169,-77.86903,427.9,0,7,4
+02,Áncash,Huaraz,-9.52614,-77.52869,1415.9,11,7,6
+03,Apurímac,Abancay,-13.63426,-72.8838,820.0,3,6,2
+04,Arequipa,Arequipa,-16.39899,-71.53747,439.4,3,7,2
+05,Ayacucho,Ayacucho,-13.1638,-74.22345,500.8,1,7,4
+06,Cajamarca,Cajamarca,-7.16378,-78.50027,875.7,2,6,2
+07,Callao,Callao,-12.05162,-77.13452,54.0,0,1,0
+08,Cusco,Cusco,-13.53188,-71.96701,801.3,4,8,6
+09,Huancavelica,Huancavelica,-12.78691,-74.97298,930.4,4,7,2
+10,Huánuco,Huánuco,-9.92882,-76.23989,617.0,4,7,5
+11,Ica,Ica,-14.07538,-75.73422,124.3,2,5,3
+12,Junín,Huancayo,-12.06866,-75.21027,1349.1,15,6,2
+13,La Libertad,Trujillo,-8.11599,-79.02998,143.8,1,5,4
+14,Lambayeque,Chiclayo,-6.77008,-79.85495,128.1,0,3,1
+15,Lima,Lima,-12.04318,-77.02824,54.0,0,7,3
+16,Loreto,Iquitos,-3.74814,-73.2529,2019.9,28,7,2
+17,Madre de Dios,Puerto Maldonado,-12.58946,-69.19948,1751.3,30,3,3
+18,Moquegua,Moquegua,-17.19747,-70.93587,97.5,0,4,0
+19,Pasco,Cerro de Pasco,-10.66577,-76.25309,874.2,1,5,2
+20,Piura,Piura,-5.18192,-80.65715,241.6,1,5,4
+21,Puno,Puno,-15.84003,-70.02198,1074.4,6,5,3
+22,San Martín,Moyobamba,-6.03441,-76.97423,943.3,12,6,2
+23,Tacna,Tacna,-18.01465,-70.25362,17.4,0,5,2
+24,Tumbes,Tumbes,-3.55592,-80.44258,699.1,7,2,2
+25,Ucayali,Pucallpa,-8.37915,-74.55387,1309.0,21,6,5
