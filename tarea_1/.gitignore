@@ -1,0 +1,16 @@
+# Pesos del modelo: GitHub rechaza archivos de mas de 100 MB
+modelo/*.safetensors
+modelo/*.bin
+modelo/*.pt
+modelo/checkpoint-*/
+
+# Respaldo crudo del scraping (HTML completos, muy pesados)
+datos/raw/*
+!datos/raw/.gitkeep
+
+# Entorno y secretos
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.env
+.DS_Store
