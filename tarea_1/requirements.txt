@@ -1,0 +1,35 @@
+# Tarea 1 – Del titular al clasificador
+# Versiones exactas del entorno usado (Python 3.12, macOS Apple Silicon, solo CPU).
+#   python3.12 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+# El LLM se ejecuta aparte con Ollama (https://ollama.com): ollama pull qwen2.5:3b
+
+# Datos y recolección (notebook 1)
+numpy==2.5.4
+pandas==3.0.6
+requests==2.34.2
+beautifulsoup4==4.15.0
+lxml==6.1.3
+
+# Gráficos
+plotly==7.1.0
+kaleido==1.5.0
+matplotlib==3.11.2
+seaborn==0.13.2
+
+# Modelado (notebook 2)
+torch==2.14.1
+transformers==5.20.1
+tokenizers==0.23.3
+safetensors==0.8.0
+accelerate==1.15.0
+datasets==5.1.0
+scikit-learn==1.9.1
+
+# Dashboard
+streamlit==1.66.0
+
+# Ejecución de notebooks
+jupyterlab==4.6.4
+ipykernel==7.4.0
+nbformat==5.11.1
