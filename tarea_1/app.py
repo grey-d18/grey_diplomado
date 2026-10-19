@@ -93,11 +93,11 @@ with izq:
     fig = px.bar(conteo, x="categoría", y="noticias", color="categoría", text="noticias",
                  title="Distribución de categorías (según filtros)")
     fig.update_layout(showlegend=False, height=420, margin=dict(t=60, b=10))
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 with der:
     st.subheader("Noticias")
     st.dataframe(filtradas[["fecha", "etiqueta", "titular", "bajada", "url"]],
-                 use_container_width=True, height=360, hide_index=True,
+                 width="stretch", height=360, hide_index=True,
                  column_config={"url": st.column_config.LinkColumn("url")})
     st.download_button("Descargar CSV filtrado", filtradas.to_csv(index=False).encode("utf-8"),
                        file_name="noticias_filtradas.csv", mime="text/csv")
@@ -122,6 +122,6 @@ else:
         fig = px.bar(probs, x="probabilidad", y="categoría", orientation="h", text_auto=".1%",
                      range_x=[0, 1], title="Probabilidad por categoría")
         fig.update_layout(height=280, yaxis={"categoryorder": "total ascending"}, margin=dict(t=50, b=10))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width="stretch")
         st.caption("La probabilidad es la salida softmax del modelo; no está calibrada, así que "
                    "indica confianza relativa, no la probabilidad real de acierto.")
