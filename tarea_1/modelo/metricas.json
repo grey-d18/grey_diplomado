@@ -1,0 +1,37 @@
+{
+  "n_noticias": 399,
+  "n_test": 60,
+  "zero_shot_40": {
+    "accuracy": 0.7,
+    "f1_macro": 0.679
+  },
+  "comparativa_test": [
+    {
+      "modelo": "Zero-shot (BERT español XNLI)",
+      "accuracy": 0.683,
+      "f1_macro": 0.663,
+      "ms_por_noticia": 82
+    },
+    {
+      "modelo": "LLM débil (Qwen 2.5 3B, Ollama)",
+      "accuracy": 0.867,
+      "f1_macro": 0.863,
+      "ms_por_noticia": 7609
+    },
+    {
+      "modelo": "DistilBERT fine-tuned",
+      "accuracy": 0.833,
+      "f1_macro": 0.838,
+      "ms_por_noticia": 6
+    }
+  ],
+  "distilbert_test": {
+    "accuracy": 0.833,
+    "f1_macro": 0.838,
+    "f1_macro_vs_llm": 0.819
+  },
+  "acuerdo_llm_humano": null,
+  "auditoria_n": 20,
+  "modelo_llm": "qwen2.5:3b",
+  "modelo_base": "distilbert-base-multilingual-cased"
+}
