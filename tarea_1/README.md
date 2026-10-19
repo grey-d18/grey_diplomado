@@ -10,7 +10,7 @@ Sí. Se recolectaron 399 noticias de El Comercio, un LLM local las etiquetó en 
 (`politica`, `economia`, `deportes`, `ciencia_tecnologia`), una persona auditó 20 etiquetas y,
 con esas etiquetas, se ajustó DistilBERT multilingüe. En un test reservado de 60 noticias el
 modelo alcanza **F1 macro 0.838**, frente a 0.663 de un modelo zero-shot, y clasifica un titular
-en ~6 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasificar titulares nuevos.
+en ~10 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasificar titulares nuevos.
 
 | Resultado (test de 60 noticias, referencia: sección del diario) | Accuracy | F1 macro |
 |---|---:|---:|
@@ -19,7 +19,11 @@ en ~6 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasific
 | **DistilBERT fine-tuned** | **0.833** | **0.838** |
 
 Línea base zero-shot en 40 titulares (Paso 1): accuracy 0.700, F1 macro 0.679.
-Acuerdo LLM–humano en la auditoría: **PENDIENTE/20**.
+Acuerdo LLM–humano en la auditoría de 20 casos al azar: **18/20 (90 %)**. Los dos desacuerdos
+fueron un informe sobre la caída de la fauna silvestre (LLM: ciencia y tecnología; revisión
+humana: economía, por su impacto en la economía de la región) y una nota sobre estafas digitales
+en la venta de entradas para BTS (LLM: economía; revisión humana: ciencia y tecnología, por
+tratarse de ciberseguridad). Detalle en `datos/auditoria_humana.csv`.
 
 ## 2. Medio y fechas de extracción
 
@@ -36,9 +40,9 @@ Acuerdo LLM–humano en la auditoría: **PENDIENTE/20**.
 
 ## 3. Hallazgos analíticos
 
-**Hallazgo 1 – Un modelo pequeño entrenado con etiquetas de un LLM casi iguala al LLM, mil veces más rápido.**
-DistilBERT obtiene F1 0.838 frente a 0.863 del LLM que le dio las etiquetas, pero tarda ~6 ms
-por titular frente a ~7 600 ms y usa ~0.6 GB de RAM frente a ~2.5 GB. Supera ampliamente al
+**Hallazgo 1 – Un modelo pequeño entrenado con etiquetas de un LLM casi iguala al LLM, cientos de veces más rápido.**
+DistilBERT obtiene F1 0.838 frente a 0.863 del LLM que le dio las etiquetas, pero tarda ~10 ms
+por titular frente a ~5 800 ms y usa ~0.6 GB de RAM frente a ~2.5 GB. Supera ampliamente al
 zero-shot (0.663). Por eso es el modelo elegido para el dashboard; el LLM es más útil como
 etiquetador fuera de línea.
 
@@ -63,7 +67,7 @@ un acierto más o menos mueve el F1 en ~1.5 puntos.
 **Limitación 2 – Cobertura y recursos.** Un solo medio, menos de dos semanas de noticias y una
 sola descarga: el modelo puede no generalizar a otros medios, fechas o temas. Todo se ejecutó en
 CPU con 8 GB de RAM, por lo que se eligieron modelos pequeños (Qwen 3B en lugar de 7B, BERT base
-en lugar de XLM-RoBERTa large). La probabilidad que muestra el dashboard no está calibrada.
+en lugar de XLM-RoBERTa large). Las latencias se midieron en ese mismo equipo y varían según su carga (entre ejecuciones el LLM osciló entre ~5.8 y ~7.6 s por noticia). La probabilidad que muestra el dashboard no está calibrada.
 
 ## 5. Ejecución en local
 

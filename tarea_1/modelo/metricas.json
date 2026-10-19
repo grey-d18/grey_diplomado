@@ -10,19 +10,19 @@
       "modelo": "Zero-shot (BERT español XNLI)",
       "accuracy": 0.683,
       "f1_macro": 0.663,
-      "ms_por_noticia": 82
+      "ms_por_noticia": 113
     },
     {
       "modelo": "LLM débil (Qwen 2.5 3B, Ollama)",
       "accuracy": 0.867,
       "f1_macro": 0.863,
-      "ms_por_noticia": 7609
+      "ms_por_noticia": 5786
     },
     {
       "modelo": "DistilBERT fine-tuned",
       "accuracy": 0.833,
       "f1_macro": 0.838,
-      "ms_por_noticia": 6
+      "ms_por_noticia": 10
     }
   ],
   "distilbert_test": {
@@ -30,7 +30,7 @@
     "f1_macro": 0.838,
     "f1_macro_vs_llm": 0.819
   },
-  "acuerdo_llm_humano": null,
+  "acuerdo_llm_humano": 0.9,
   "auditoria_n": 20,
   "modelo_llm": "qwen2.5:3b",
   "modelo_base": "distilbert-base-multilingual-cased"
