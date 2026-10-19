@@ -7,7 +7,7 @@ Python Intermedio · Diplomado en Data Science (QLAB) · **Opción B – El Come
 **¿Pueden convertir titulares peruanos en un clasificador de noticias?**
 
 Sí. Se recolectaron 399 noticias de El Comercio, un LLM local las etiquetó en 4 categorías
-(`politica`, `economia`, `deportes`, `ciencia_tecnologia`), una persona auditó 20 etiquetas y,
+(`politica`, `economia`, `deportes`, `ciencia_tecnologia`), se realizó una auditoría humana de 20 etiquetas y,
 con esas etiquetas, se ajustó DistilBERT multilingüe. En un test reservado de 60 noticias el
 modelo alcanza **F1 macro 0.838**, frente a 0.663 de un modelo zero-shot, y clasifica un titular
 en ~6–10 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasificar titulares nuevos.

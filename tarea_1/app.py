@@ -56,7 +56,7 @@ st.markdown(
     f"""
 **Metodología.** Se recolectaron **{len(noticias)} noticias de El Comercio** (archivo HTML por
 sección, respetando `robots.txt`). Un LLM local (**{metricas.get('modelo_llm', 'Qwen 2.5 3B')}** con
-Ollama) etiquetó cada noticia en 4 categorías y una persona auditó 20 casos al azar. Con esas
+Ollama) etiquetó cada noticia en 4 categorías y se realizó una auditoría humana de 20 casos al azar. Con esas
 etiquetas se ajustó **DistilBERT multilingüe** (HuggingFace `Trainer`, 3 épocas), evaluado en un
 conjunto de test reservado y comparado con un modelo zero-shot.
 """
