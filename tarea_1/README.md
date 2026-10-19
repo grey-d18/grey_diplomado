@@ -2,6 +2,8 @@
 
 Python Intermedio · Diplomado en Data Science (QLAB) · **Opción B – El Comercio**
 
+**Dashboard en vivo:** https://grey-d18-grey-diplomado-tarea-1app-6k2ok3.streamlit.app
+
 ## 1. Pregunta del proyecto
 
 **¿Pueden convertir titulares peruanos en un clasificador de noticias?**
@@ -81,9 +83,13 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-**Pesos del modelo.** `modelo/model.safetensors` pesa ~540 MB y no se sube a GitHub (límite de
-100 MB). Para generarlo, ejecutar `02_clasificacion.ipynb` (el entrenamiento tarda ~1 min en CPU).
-Sin los pesos, el dashboard funciona igual pero muestra un aviso en el probador en vivo.
+**Pesos del modelo.** `modelo/model.safetensors` pesa ~540 MB y no se sube al repositorio (límite
+de 100 MB de Git). Está publicado en el Release [`modelo-v1`](https://github.com/grey-d18/grey_diplomado/releases/tag/modelo-v1)
+y `app.py` lo descarga automáticamente la primera vez si no está en `modelo/`. También se puede
+regenerar ejecutando `02_clasificacion.ipynb` (el entrenamiento tarda ~1 min en CPU).
+
+**Despliegue.** La app está publicada en Streamlit Community Cloud (enlace al inicio). En Linux,
+`requirements.txt` instala PyTorch solo CPU para no descargar las librerías de GPU.
 
 Para reproducir todo el proceso:
 
