@@ -1,5 +1,6 @@
 # Pesos del modelo: GitHub rechaza archivos de mas de 100 MB
 modelo/*.safetensors
+modelo/*.parcial
 modelo/*.bin
 modelo/*.pt
 modelo/checkpoint-*/

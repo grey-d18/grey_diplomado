@@ -12,6 +12,7 @@ import streamlit as st
 
 BASE = Path(__file__).parent
 DIR_MODELO = BASE / "modelo"
+URL_PESOS = "https://github.com/grey-d18/grey_diplomado/releases/download/modelo-v1/model.safetensors"
 CATEGORIAS = ["politica", "economia", "deportes", "ciencia_tecnologia"]
 NOMBRES = {
     "politica": "Política",
@@ -35,10 +36,29 @@ def cargar_metricas() -> dict:
     return json.loads(archivo.read_text(encoding="utf-8")) if archivo.exists() else {}
 
 
-@st.cache_resource
+def descargar_pesos(destino: Path) -> bool:
+    """Los pesos (~540 MB) no están en Git: se bajan una vez desde el Release de GitHub."""
+    import requests
+
+    temporal = destino.with_suffix(".parcial")
+    try:
+        with requests.get(URL_PESOS, stream=True, timeout=60) as r:
+            r.raise_for_status()
+            with open(temporal, "wb") as f:
+                for bloque in r.iter_content(chunk_size=1 << 20):
+                    f.write(bloque)
+        temporal.rename(destino)  # solo se da por descargado si terminó completo
+        return True
+    except Exception:
+        temporal.unlink(missing_ok=True)
+        return False
+
+
+@st.cache_resource(show_spinner="Cargando el modelo (la primera vez descarga ~540 MB)...")
 def cargar_clasificador():
     """Carga DistilBERT una sola vez por sesión del servidor, en CPU."""
-    if not (DIR_MODELO / "model.safetensors").exists():
+    pesos = DIR_MODELO / "model.safetensors"
+    if not pesos.exists() and not descargar_pesos(pesos):
         return None
     import torch
     from transformers import pipeline
@@ -109,8 +129,8 @@ st.write("Escribe o pega un titular nuevo y el modelo predecirá su categoría."
 
 clasificador = cargar_clasificador()
 if clasificador is None:
-    st.warning("No se encontró `modelo/model.safetensors`. Ejecuta `02_clasificacion.ipynb` "
-               "para entrenar y guardar el modelo (los pesos no se suben a GitHub por tamaño).")
+    st.warning("No se encontró `modelo/model.safetensors` y no se pudo descargar desde el Release "
+               "de GitHub. Ejecuta `02_clasificacion.ipynb` para entrenar y guardar el modelo.")
 else:
     titular = st.text_input("Titular", placeholder="Ej.: BCR mantiene su tasa de referencia en 4,25%")
     if st.button("Clasificar", type="primary", disabled=not titular.strip()):

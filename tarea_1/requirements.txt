@@ -18,7 +18,9 @@ matplotlib==3.11.2
 seaborn==0.13.2
 
 # Modelado (notebook 2)
-torch==2.14.1
+# En Linux (Streamlit Community Cloud) se instala la versión solo CPU para no bajar ~2 GB de librerías de GPU
+torch==2.14.1; sys_platform != "linux"
+torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl ; sys_platform == "linux"
 transformers==5.20.1
 tokenizers==0.23.3
 safetensors==0.8.0
