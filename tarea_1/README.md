@@ -10,7 +10,7 @@ Sí. Se recolectaron 399 noticias de El Comercio, un LLM local las etiquetó en 
 (`politica`, `economia`, `deportes`, `ciencia_tecnologia`), una persona auditó 20 etiquetas y,
 con esas etiquetas, se ajustó DistilBERT multilingüe. En un test reservado de 60 noticias el
 modelo alcanza **F1 macro 0.838**, frente a 0.663 de un modelo zero-shot, y clasifica un titular
-en ~10 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasificar titulares nuevos.
+en ~6–10 ms en CPU. Un dashboard en Streamlit permite explorar el corpus y clasificar titulares nuevos.
 
 | Resultado (test de 60 noticias, referencia: sección del diario) | Accuracy | F1 macro |
 |---|---:|---:|
@@ -41,8 +41,8 @@ tratarse de ciberseguridad). Detalle en `datos/auditoria_humana.csv`.
 ## 3. Hallazgos analíticos
 
 **Hallazgo 1 – Un modelo pequeño entrenado con etiquetas de un LLM casi iguala al LLM, cientos de veces más rápido.**
-DistilBERT obtiene F1 0.838 frente a 0.863 del LLM que le dio las etiquetas, pero tarda ~10 ms
-por titular frente a ~5 800 ms y usa ~0.6 GB de RAM frente a ~2.5 GB. Supera ampliamente al
+DistilBERT obtiene F1 0.838 frente a 0.863 del LLM que le dio las etiquetas, pero tarda ~6–10 ms
+por titular frente a ~5.8–7.6 s y usa ~0.6 GB de RAM frente a ~2.5 GB. Supera ampliamente al
 zero-shot (0.663). Por eso es el modelo elegido para el dashboard; el LLM es más útil como
 etiquetador fuera de línea.
 
@@ -58,7 +58,7 @@ ciencia y tecnología necesita 13 días. El corpus está balanceado en cantidad,
 ## 4. Limitaciones técnicas
 
 **Limitación 1 – Supervisión débil y referencia imperfecta.** El modelo se entrena con etiquetas
-de un LLM, que coinciden con la sección del diario en el 89 % de los casos: sus errores
+de un LLM, que coinciden con la sección del diario en el 89.7 % de los casos: sus errores
 sistemáticos (economía → política) pasan al clasificador. La referencia de evaluación, la sección
 del diario, tampoco es perfecta: algunas secciones son formatos (opinión, ecdata, BBC) y se
 asignaron según la página de archivo donde aparecieron. El test tiene solo 60 noticias, así que
