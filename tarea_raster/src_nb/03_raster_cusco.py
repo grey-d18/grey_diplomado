@@ -1,8 +1,7 @@
 # %% [markdown]
-# # Tarea raster · 3. ¿Cuánto y qué se quemó en Livitaca y Huanoquite?
+# # Incendios en el Perú, octubre de 2026 · 3. ¿Cuánto y qué se quemó en Livitaca y Huanoquite?
 #
-# Paso 6 del método del profesor (Sentinel-2 y dNBR) y el cruce con cobertura, personas y
-# viviendas, para dos incendios en territorio de **comunidades campesinas quechuas** del Cusco:
+# Área quemada con Sentinel-2 (dNBR), qué cobertura se quemó y el relieve, para dos incendios en territorio de **comunidades campesinas quechuas** del Cusco:
 #
 # | Incendio | Provincia | Fuego (VIIRS) | Por qué este |
 # |---|---|---|---|
@@ -11,7 +10,7 @@
 #
 # **Por qué no Río Tambo, Manantay o Yarinacocha:** en la selva es temporada de lluvias. Después
 # del fuego, la mejor combinación de imágenes deja ver solo el 33 % de Río Tambo, y en Pucallpa
-# las nubes cubren entre 56 % y 99 % (revisión en la bitácora del README).
+# las nubes cubren entre 56 % y 99 % (revisión de nubes en el notebook 1).
 
 # %%
 import warnings
@@ -54,7 +53,7 @@ for nombre, caso in CASOS.items():
           f"{fila.inicio[:10]} a {fila.ultimo[:10]}")
 
 # %% [markdown]
-# ## Paso 6 · Sentinel-2: elegir las imágenes
+# ## Sentinel-2: elegir las imágenes
 #
 # Para cada fecha buscamos la escena que cubre la zona y medimos las nubes **dentro de la zona del
 # incendio** (no en toda la escena de 110 × 110 km, que es lo que reporta el catálogo).
@@ -125,8 +124,8 @@ for nombre, caso in CASOS.items():
 # | 0,44 – 0,66 | Moderada-alta |
 # | ≥ 0,66 | Alta |
 #
-# **Decisión: dNBR sembrado con focos** (el método del tablero del profesor). Quemado = dNBR ≥ 0,27
-# (el umbral de la diapositiva de Curahuasi), pero solo las **manchas continuas que tocan a ≤ 1 km
+# **Decisión: dNBR sembrado con focos.** Quemado = dNBR ≥ 0,27 (inicio de la severidad
+# moderada-baja del USGS), pero solo las **manchas continuas que tocan a ≤ 1 km
 # algún foco VIIRS** del incendio. Así:
 #
 # - no se suman cambios lejanos que no son este incendio (cosechas, riberas, otra quema);
@@ -184,8 +183,8 @@ for nombre, caso in CASOS.items():
 # %% [markdown]
 # ### ¿Cuánto cambia el número según la decisión?
 #
-# Como en Curahuasi: la computadora siempre da un número. Mostramos tres variantes para que se
-# vea qué tan sensible es el resultado.
+# La computadora siempre da un número; lo que importa es si es creíble. Mostramos las variantes
+# para que se vea qué tan sensible es el resultado a cada decisión.
 
 # %%
 sens = {}
@@ -230,7 +229,7 @@ for (nombre, caso), (izq, der) in zip(CASOS.items(), ejes):
 plt.tight_layout(); fig.savefig(FIG / "03_dnbr_livitaca_huanoquite.png", dpi=150); plt.show()
 
 # %% [markdown]
-# ## Paso 3 aplicado · ¿Qué se quemó?
+# ## ¿Qué se quemó?
 #
 # Cruzamos los píxeles quemados con ESA WorldCover 2021 (10 m), llevado a la grilla de 20 m del
 # dNBR con vecino más cercano (es una variable de categorías: no se promedia).
@@ -334,6 +333,57 @@ for nombre, caso in CASOS.items():
                           "geometry": gpd.GeoSeries([caso[clave]], crs=caso["ref"].rio.crs).to_crs(4326).iloc[0]})
 gpd.GeoDataFrame(filas_geo, crs=4326).to_file(PROC / "area_quemada_cusco.gpkg", driver="GPKG")
 print("guardado:", PROC / "area_quemada_cusco.gpkg")
+
+# %% [markdown]
+# ## Relieve en 3D
+#
+# El relieve explica por dónde corre el fuego: sube por las laderas y se detiene en quebradas, ríos o
+# cumbres rocosas. Leemos el Copernicus DEM a 30 m en la caja de cada incendio, lo llevamos a la grilla
+# de 20 m del dNBR y pintamos la superficie con el dNBR.
+#
+# - **Exageración vertical ×1,5**: en una caja de ~10 km, sin exagerar, las laderas se ven planas.
+# - Para dibujar se usa un píxel de cada 3 (60 m): el detalle completo pesaría demasiado.
+
+# %%
+from matplotlib import cm
+from matplotlib.colors import Normalize, LightSource
+
+norma = Normalize(-0.2, 0.8)
+fig = plt.figure(figsize=(13, 6))
+for k, (nombre, caso) in enumerate(CASOS.items(), start=1):
+    items = catalogo.search(collections=["cop-dem-glo-30"], intersects=caso["caja"]).item_collection()
+    piezas = [recortar(it, "data", caso["caja"]) for it in items]
+    from rioxarray.merge import merge_arrays
+    dem = merge_arrays(piezas).rio.reproject_match(caso["ref"], resampling=Resampling.bilinear)
+    caso["dem"] = dem
+    z = dem.values[::3, ::3]
+    d = np.nan_to_num(caso["dnbr"].values[::3, ::3], nan=0)
+    xx, yy = np.meshgrid(dem.x.values[::3], dem.y.values[::3])
+    sombra = LightSource(315, 45).hillshade(z, vert_exag=1.5, dx=60, dy=60)
+    colores = cm.RdYlGn_r(norma(d))
+    colores[..., :3] *= (0.55 + 0.45 * sombra[..., None])            # sombreado para leer la forma
+    ax = fig.add_subplot(1, 2, k, projection="3d")
+    ax.plot_surface((xx - xx.min()) / 1000, (yy - yy.min()) / 1000, z, facecolors=colores,
+                    rstride=1, cstride=1, linewidth=0, antialiased=False, shade=False)
+    ax.set_box_aspect((1, (yy.max() - yy.min()) / (xx.max() - xx.min()), 0.35))
+    ax.view_init(elev=38, azim=-60)
+    ax.set_xlabel("km (este)"); ax.set_ylabel("km (norte)"); ax.set_zlabel("m s. n. m.")
+    ax.set_title(f"{nombre}: altitud {np.nanmin(z):,.0f}–{np.nanmax(z):,.0f} m", fontsize=10)
+    v = caso["zona"]
+    print(f"{nombre}: el área quemada está entre {np.nanpercentile(dem.values[v], 5):,.0f} y "
+          f"{np.nanpercentile(dem.values[v], 95):,.0f} m (percentiles 5–95)")
+sm = cm.ScalarMappable(norm=norma, cmap="RdYlGn_r")
+fig.colorbar(sm, ax=fig.axes, shrink=0.5, label="dNBR (rojo = quemado)")
+fig.suptitle("Relieve 3D (Copernicus DEM, exageración vertical ×1,5) coloreado con el dNBR", fontsize=11)
+fig.savefig(FIG / "03_relieve_3d.png", dpi=150); plt.show()
+
+# %%
+# Grilla reducida (un píxel de cada 4 = 80 m) para el 3D interactivo del tablero
+for nombre, caso in CASOS.items():
+    np.savez_compressed(PROC / f"relieve_{nombre.lower()}.npz",
+                        z=caso["dem"].values[::4, ::4].astype("float32"),
+                        dnbr=caso["dnbr"].values[::4, ::4].astype("float32"),
+                        x=caso["dem"].x.values[::4], y=caso["dem"].y.values[::4], crs=str(caso["ref"].rio.crs))
 
 # %% [markdown]
 # ## Resumen para el tablero

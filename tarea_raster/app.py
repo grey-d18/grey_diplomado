@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 import pandas as pd
+import plotly.graph_objects as go
 import pydeck as pdk
 import streamlit as st
 
@@ -22,6 +23,19 @@ def mapa(capas, lon, lat, zoom):
                     tooltip={"text": "{tooltip}"})
 
 
+def leyenda(elementos):
+    """Leyenda visible bajo el mapa: [(color rgb, forma 'circulo'|'cuadro'|'linea', texto)]."""
+    partes = []
+    for rgb, forma, texto in elementos:
+        color = f"rgb({rgb[0]},{rgb[1]},{rgb[2]})"
+        estilo = {"circulo": f"width:11px;height:11px;border-radius:50%;background:{color}",
+                  "cuadro": f"width:14px;height:11px;background:{color}",
+                  "linea": f"width:16px;height:0;border-top:2px dashed {color}"}[forma]
+        partes.append(f'<span style="display:inline-flex;align-items:center;gap:6px;margin-right:16px">'
+                      f'<span style="display:inline-block;{estilo}"></span>{texto}</span>')
+    st.markdown('<div style="font-size:0.85rem;line-height:1.9">' + "".join(partes) + "</div>", unsafe_allow_html=True)
+
+
 def fmt(x):
     return f"{x:,.0f}".replace(",", " ")
 
@@ -32,7 +46,7 @@ st.markdown(
     "Incendios en el Perú del **14 al 21 de octubre de 2026**, vistos desde el espacio. "
     "Panorama nacional con focos VIIRS y, a fondo, dos incendios en territorio de **comunidades "
     "campesinas quechuas del Cusco**: **Livitaca** (Chumbivilcas) y **Huanoquite** (Paruro).  \n"
-    f"Corte de datos: {DATOS['corte']} · Ciencia de Datos con Python · Diplomado QLAB · Reto D")
+    f"Corte de datos: {DATOS['corte']} · Ciencia de Datos con Python · Diplomado QLAB")
 
 nac = DATOS["nacional"]
 c1, c2, c3, c4 = st.columns(4)
@@ -56,7 +70,9 @@ with t_nac:
     izq, der = st.columns([3, 2])
     with izq:
         st.pydeck_chart(mapa([capa], -75, -10, 4.3), height=560)
-        st.caption("Tamaño del círculo = huella VIIRS (ha). Color = personas a 5 km (amarillo: pocas · rojo: muchas).")
+        leyenda([([230, 200, 40], "circulo", "pocas personas a 5 km"), ([230, 115, 40], "circulo", "intermedio"),
+                 ([230, 30, 40], "circulo", f"{fmt(tope)} o más personas a 5 km")])
+        st.caption("Tamaño del círculo = huella VIIRS del incendio (ha). Pasa el cursor sobre un círculo para ver el detalle.")
     with der:
         st.markdown("**El fuego más grande no es el que toca a más gente**")
         cols = {"distrito": "Distrito", "departamento": "Depto.", "huella_ha": "Huella (ha)", "personas_5km": "Personas a 5 km"}
@@ -65,7 +81,7 @@ with t_nac:
         st.markdown("Los que tienen más gente cerca")
         st.dataframe(inc.nlargest(8, "personas_5km")[list(cols)].rename(columns=cols), hide_index=True, width="stretch")
     st.info("**Cómo leer los 5 km.** En el panorama nacional se cuentan las personas (WorldPop) a 5 km de los "
-            "**focos VIIRS** de cada incendio. Es la convención de \"población cercana\" del monitor del profesor y "
+            "**focos VIIRS** de cada incendio. Es un radio convencional de \"población cercana\" y "
             "sirve para comparar los 107 incendios entre sí. No mide daño: un foco de calor no es un incendio, y "
             "WorldPop es un modelo, no un censo.")
 
@@ -95,7 +111,9 @@ with t_quemo:
         capas.append(pdk.Layer("ScatterplotLayer", focos, get_position=["lon", "lat"], get_fill_color=COLOR["focos"],
                                get_radius=60, pickable=True))
         st.pydeck_chart(mapa(capas, focos.lon.mean(), focos.lat.mean(), 12), height=480)
-        st.caption("Marrón oscuro: quemado con dNBR ≥ 0,27 · marrón claro: solo con dNBR ≥ 0,10 · puntos azules: focos VIIRS.")
+        leyenda([(COLOR["conservadora"], "cuadro", "quemado (dNBR ≥ 0,27, conservador)"),
+                 (COLOR["amplia"], "cuadro", "quemado solo con dNBR ≥ 0,10 (amplio)"),
+                 (COLOR["focos"], "circulo", "foco de calor VIIRS")])
     with der:
         cob = pd.DataFrame(c["cobertura_ha"]).fillna(0)
         cob = cob[cob.max(axis=1) >= 1]
@@ -110,6 +128,17 @@ with t_quemo:
         imagenes["uso"] = ["antes"] * (len(imagenes) - 1) + ["después"]
         st.markdown("**Imágenes Sentinel-2 usadas**")
         st.dataframe(imagenes, hide_index=True, width="stretch")
+    st.markdown("**Relieve en 3D** · Copernicus DEM (30 m) pintado con el dNBR. Arrastra para girar.")
+    r = c["relieve"]
+    fig3d = go.Figure(go.Surface(
+        x=r["x_km"], y=r["y_km"], z=r["z"], surfacecolor=r["dnbr"], cmin=-0.2, cmax=0.8,
+        colorscale="RdYlGn_r", colorbar=dict(title="dNBR<br>(rojo =<br>quemado)", len=0.6),
+        hovertemplate="altitud %{z:.0f} m<br>dNBR %{surfacecolor:.2f}<extra></extra>"))
+    fig3d.update_layout(height=520, margin=dict(l=0, r=0, t=10, b=0),
+                        scene=dict(xaxis_title="km (este)", yaxis_title="km (norte)", zaxis_title="m s. n. m.",
+                                   aspectmode="manual", aspectratio=dict(x=1, y=max(r["y_km"]) / max(r["x_km"]), z=0.35),
+                                   camera=dict(eye=dict(x=-1.2, y=-1.5, z=1.0))))
+    st.plotly_chart(fig3d, width="stretch")
     with st.expander("¿Cuánto cambia el número según la decisión?"):
         st.dataframe(pd.Series(c["sensibilidad_ha"], name="ha").to_frame(), width="stretch")
         st.image(str(FIG / "03_dnbr_livitaca_huanoquite.png"), caption="Falso color SWIR y dNBR de los dos incendios")
@@ -133,6 +162,8 @@ with t_quien:
         col.metric(f"Edificaciones {zona}", fmt(fila["edificaciones (conf ≥ 0,75)"]), help=significado[zona])
     izq, der = st.columns([3, 2])
     with izq:
+        capa_mapa = st.radio("Mostrar en el mapa", ["Edificaciones (Open Buildings)", "Personas (WorldPop)"],
+                             horizontal=True, key="capa_quien")
         e = pd.DataFrame(c["edificaciones_1km"], columns=["lon", "lat", "dist_m"])
         e["tipo"] = pd.cut(e.dist_m, [-1, 100, 500, 1000], labels=["exposición directa", "riesgo directo", "medio de vida"])
         e["color"] = e.tipo.astype(str).map(ZONA_COLOR)
@@ -140,12 +171,36 @@ with t_quien:
         gj = c["area_quemada"]["amplia"]
         for f in gj["features"]:
             f["properties"]["tooltip"] = "Área quemada (amplia)"
-        capas = [pdk.Layer("GeoJsonLayer", gj, get_fill_color=COLOR["amplia"], stroked=False, pickable=True),
-                 pdk.Layer("ScatterplotLayer", e, get_position=["lon", "lat"], get_fill_color="color",
-                           get_radius=25, radius_min_pixels=2, pickable=True)]
-        st.pydeck_chart(mapa(capas, e.lon.mean(), e.lat.mean(), 12), height=480)
-        st.caption("Rojo: exposición directa (≤ 100 m) · naranja: riesgo directo (≤ 500 m) · azul: medio de vida (≤ 1 km). "
-                   "Edificaciones de Google Open Buildings con confianza ≥ 0,75.")
+        if capa_mapa.startswith("Edificaciones"):
+            capas = [pdk.Layer("GeoJsonLayer", gj, get_fill_color=COLOR["amplia"], stroked=False, pickable=True),
+                     pdk.Layer("ScatterplotLayer", e, get_position=["lon", "lat"], get_fill_color="color",
+                               get_radius=25, radius_min_pixels=2, pickable=True)]
+            st.pydeck_chart(mapa(capas, e.lon.mean(), e.lat.mean(), 12), height=480)
+            n = e.tipo.value_counts()
+            leyenda([(COLOR["amplia"], "cuadro", "área quemada"),
+                     (ZONA_COLOR["exposición directa"], "circulo", f"edificación dentro o a ≤ 100 m · exposición directa ({n.get('exposición directa', 0)})"),
+                     (ZONA_COLOR["riesgo directo"], "circulo", f"edificación a 100–500 m · riesgo directo ({n.get('riesgo directo', 0)})"),
+                     (ZONA_COLOR["medio de vida"], "circulo", f"edificación a 500 m–1 km · medio de vida ({n.get('medio de vida', 0)})")])
+            st.caption("Un punto = un techo detectado por Google Open Buildings (confianza ≥ 0,75). "
+                       "La leyenda cuenta cada franja por separado; las métricas de arriba son acumuladas.")
+        else:
+            cel = pd.DataFrame(c["worldpop_celdas"])
+            cel = cel[cel.personas > 0]
+            tope_d = max(cel.densidad.max(), 1)
+            cel["color"] = cel.densidad.map(lambda d: [84, 39, 143, int(30 + 200 * d / tope_d)])
+            cel["tooltip"] = ("~" + cel.personas.round(0).astype(int).astype(str) + " personas en la celda · "
+                              + cel.densidad.round(0).astype(int).astype(str) + " por km²")
+            capas = [pdk.Layer("PolygonLayer", cel, get_polygon="poligono", get_fill_color="color",
+                               get_line_color=[255, 255, 255, 80], line_width_min_pixels=1, pickable=True),
+                     pdk.Layer("GeoJsonLayer", gj, get_fill_color=[0, 0, 0, 0], get_line_color=[122, 46, 31, 255],
+                               line_width_min_pixels=2, stroked=True, filled=False, pickable=True)]
+            st.pydeck_chart(mapa(capas, e.lon.mean(), e.lat.mean(), 12), height=480)
+            leyenda([([84, 39, 143], "cuadro", f"más personas (hasta {fmt(tope_d)} por km²)"),
+                     ([215, 205, 230], "cuadro", "pocas personas"),
+                     ([122, 46, 31], "linea", "borde del área quemada")])
+            st.caption("Cada cuadrado es una celda de ~1 km de WorldPop: personas **estimadas** por un modelo, no "
+                       "contadas. Compara con las edificaciones: el modelo reparte gente de forma pareja, incluso "
+                       "sobre el pasto quemado donde casi no hay techos.")
     with der:
         tabla = z[["edificaciones (conf ≥ 0,75)", "personas (WorldPop)"]].copy()
         tabla.insert(0, "significa", [significado[i] for i in tabla.index])
@@ -178,7 +233,7 @@ with t_oficial:
 
 # ---------------------------------------------------------------- método
 with t_metodo:
-    st.markdown("Los ocho pasos del monitor del profesor, y cada decisión que tomamos.")
+    st.markdown("Cada decisión del método y por qué la tomamos.")
     st.dataframe(pd.DataFrame(DATOS["decisiones"]).rename(columns={"tema": "Tema", "decision": "Decisión", "por_que": "Por qué"}),
                  hide_index=True, width="stretch")
     st.markdown(

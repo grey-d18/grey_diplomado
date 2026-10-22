@@ -1,13 +1,13 @@
 # %% [markdown]
-# # Tarea raster · 2. De focos de calor a incendios, y a quién alcanzan
+# # Incendios en el Perú, octubre de 2026 · 2. De focos de calor a incendios, y a quién alcanzan
 #
-# Pasos 4 y 5 del método del profesor, más el **reto D (¿a quién afecta?)** para *todo* el país:
+# Del dato crudo de focos a una tabla de incendios, y cuántas personas viven cerca de cada uno, en *todo* el país:
 #
-# | Paso | Qué hacemos |
+# | Etapa | Qué hacemos |
 # |---|---|
-# | 4 · Focos | Unir 3 satélites, quitar baja confianza, volcanes y fuentes fijas |
-# | 5 · Incendios | Focos a ≤ 1 km y ≤ 48 h entre sí = un incendio |
-# | Reto D | Personas a 5 km de cada incendio (WorldPop, raster → tabla con `zonal_stats`) |
+# | Focos | Unir 3 satélites, quitar baja confianza, volcanes y fuentes fijas |
+# | Incendios | Focos a ≤ 1 km y ≤ 48 h entre sí = un incendio |
+# | Población cercana | Personas a 5 km de cada incendio (WorldPop, raster → tabla con `zonal_stats`) |
 #
 # > Un foco de calor no es un incendio: es un píxel de 375 m donde el satélite midió calor
 # > anómalo. Puede ser una quema agrícola, un incendio forestal o una chimenea.
@@ -29,7 +29,7 @@ plt.rcParams.update({"figure.dpi": 110, "font.size": 9,
                      "axes.spines.top": False, "axes.spines.right": False})
 
 # %% [markdown]
-# ## Paso 4 · Focos y limpieza
+# ## Focos y limpieza
 
 # %%
 focos = leer_focos()
@@ -66,7 +66,7 @@ print(limpieza.to_string())
 print(f"focos limpios: {len(focos):,} de {n0:,}")
 
 # %% [markdown]
-# ## Paso 5 · Incendios: ≤ 1 km y ≤ 48 h
+# ## Incendios: ≤ 1 km y ≤ 48 h
 #
 # Construimos un grafo: cada foco es un nodo y dos focos se conectan si están a 1 km o menos
 # **y** a 48 horas o menos. Cada componente conectada es un incendio.
@@ -92,7 +92,7 @@ print(f"{len(incendios):,} incendios · {(incendios.huella_ha > 100).sum()} con 
       f"corte {t_corte:%d/%m %H:%M} UTC")
 
 # %% [markdown]
-# Nos quedamos con los incendios con huella **> 100 ha** (el mismo umbral del monitor): por debajo
+# Nos quedamos con los incendios con huella **> 100 ha** : por debajo
 # de eso, buena parte son quemas agrícolas de uno o dos píxeles.
 
 # %%
@@ -104,7 +104,7 @@ zona5 = (focos[focos.incendio.isin(grandes.index)].to_crs(CRS_METRICO)
 zona5 = gpd.GeoSeries(zona5, crs=CRS_METRICO).to_crs(4326).loc[grandes.index]
 
 # %% [markdown]
-# ## Reto D · ¿A quién afecta? Personas a 5 km
+# ## ¿A quién afecta? Personas a 5 km
 #
 # La operación central de la clase: **raster → tabla**. `zonal_stats` suma los píxeles de
 # WorldPop (personas por km²) dentro de cada zona de 5 km.
@@ -186,7 +186,7 @@ ax.set_title(f"{len(por_distrito)} distritos con incendios > 100 ha y personas a
 ax.axis("off"); plt.tight_layout(); fig.savefig(FIG / "02_mapa_personas_5km.png", dpi=150); plt.show()
 
 # %% [markdown]
-# ## Guardar para los siguientes pasos
+# ## Guardar para los siguientes notebooks
 
 # %%
 focos.drop(columns=["t"]).assign(t=focos.t.astype(str)).to_file(PROC / "focos_limpios.gpkg", driver="GPKG")

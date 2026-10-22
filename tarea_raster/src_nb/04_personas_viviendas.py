@@ -1,7 +1,7 @@
 # %% [markdown]
-# # Tarea raster · 4. ¿A quién alcanza el fuego? Personas y viviendas en Livitaca y Huanoquite
+# # Incendios en el Perú, octubre de 2026 · 4. ¿A quién alcanza el fuego? Personas y viviendas en Livitaca y Huanoquite
 #
-# Reto D aplicado a los dos incendios del Cusco. Dos fuentes que miden cosas distintas:
+# Quién vive cerca de los dos incendios del Cusco. Dos fuentes que miden cosas distintas:
 #
 # | Fuente | Qué mide | Tipo |
 # |---|---|---|
@@ -21,8 +21,8 @@
 # | Hasta 500 m | **Riesgo directo**: poblados que el fuego pudo alcanzar si seguía avanzando |
 # | Hasta 1 km | **Impacto en el medio de vida**: familias cuyos pastos de uso diario se quemaron |
 #
-# **Por qué no 5 km aquí.** El radio de 5 km del notebook 2 es una convención del monitor del
-# profesor para "población cercana" y se mide desde los focos VIIRS. Aquí medimos desde el área
+# **Por qué no 5 km aquí.** El radio de 5 km del notebook 2 es una convención de "población
+# cercana" para comparar todo el país, y se mide desde los focos VIIRS. Aquí medimos desde el área
 # quemada de Sentinel-2: mezclar ambos daría números que parecen comparables y no lo son. Livitaca
 # y Huanoquite aparecen en el ranking nacional de 5 km del notebook 2, calculados igual que el resto.
 #
@@ -131,30 +131,71 @@ tabla.to_csv(PROC / "personas_viviendas_cusco.csv")
 tabla.round(1)
 
 # %% [markdown]
-# ### Mapa
+# ### Mapas: personas y edificaciones, por separado
+#
+# Son dos datos distintos y se muestran en paneles distintos, cada uno con su leyenda:
+#
+# - **Izquierda · personas (WorldPop):** las celdas originales de ~1 km (personas por km²), con la
+#   escala de color ajustada a cada incendio. Los conteos de la tabla usan las sub-celdas de 100 m.
+# - **Derecha · edificaciones (Open Buildings):** un punto por techo, coloreado según la **franja** de
+#   distancia al área quemada. La leyenda cuenta cada franja por separado (100–500 m, 500 m–1 km); la
+#   tabla de arriba es acumulada (≤ 500 m incluye las de ≤ 100 m).
 
 # %%
-fig, ejes = plt.subplots(1, 2, figsize=(11.5, 6))
-fuertes = edif[edif.confidence >= 0.75]
-for ax, (inc, geom) in zip(ejes, amplia.items()):
-    z = zonas[zonas.incendio == inc].set_index("zona")
-    lim = z.loc["hasta 1 km"].geometry.buffer(1500).bounds
-    for zona, color in (("hasta 1 km", "#f1e8dc"), ("hasta 500 m", "#e8cfb4"), ("hasta 100 m", "#d9a57f")):
-        gpd.GeoSeries([z.loc[zona].geometry], crs=CRS_METRICO).plot(ax=ax, color=color, edgecolor="#999", linewidth=0.4)
-    gpd.GeoSeries([geom], crs=CRS_METRICO).plot(ax=ax, color="#7a2e1f", linewidth=0)
-    dentro_1km = fuertes.within(z.loc["hasta 1 km"].geometry)
-    ax.scatter(fuertes[~dentro_1km].geometry.x, fuertes[~dentro_1km].geometry.y, s=1, c="#9aa7b0", alpha=0.5,
-               label="edificaciones a más de 1 km")
-    ax.scatter(fuertes[dentro_1km].geometry.x, fuertes[dentro_1km].geometry.y, s=2.5, c="#1f4e9c",
-               label="edificaciones hasta 1 km")
-    ax.set_title(f"{inc} · edificaciones: {z.loc['dentro del área quemada'].edif_075:,.0f} dentro · "
-                 f"{z.loc['hasta 100 m'].edif_075:,.0f} ≤ 100 m · {z.loc['hasta 500 m'].edif_075:,.0f} ≤ 500 m · "
-                 f"{z.loc['hasta 1 km'].edif_075:,.0f} ≤ 1 km", fontsize=9)
-    ax.set_xlim(lim[0], lim[2]); ax.set_ylim(lim[1], lim[3]); ax.set_xticks([]); ax.set_yticks([])
-    ax.legend(loc="lower right", fontsize=7.5, markerscale=5)
-fig.suptitle("Área quemada (marrón) y franjas de 100 m, 500 m y 1 km · edificaciones de Open Buildings (confianza ≥ 0,75)",
-             fontsize=10.5)
-plt.tight_layout(rect=[0, 0, 1, 0.95]); fig.savefig(FIG / "04_personas_viviendas.png", dpi=150); plt.show()
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+
+FRANJAS = [("dentro o a ≤ 100 m · exposición directa", 0, 100, "#c81e1e"),
+           ("100–500 m · riesgo directo", 100, 500, "#e6821e"),
+           ("500 m–1 km · medio de vida", 500, 1000, "#1f4e9c")]
+ext_1km = [t.c, t.c + t.a * pob.shape[1], t.f + t.e * pob.shape[0], t.f]
+km2_celda = abs(t.a * t.e) * 111.32 * 110.57 * np.cos(np.radians(-14))
+fuertes = edif[edif.confidence >= 0.75].copy()
+
+fig, ejes = plt.subplots(2, 2, figsize=(12, 12), layout="constrained")
+for (ax_p, ax_e), (inc, geom) in zip(ejes, amplia.items()):
+    z = zonas[zonas.incendio == inc].set_index("zona").to_crs(4326)
+    quem = gpd.GeoSeries([geom], crs=CRS_METRICO).to_crs(4326)
+    lim = z.loc["hasta 1 km"].geometry.buffer(0.012).bounds
+    fuertes["dist_m"] = fuertes.distance(geom)
+    cerca = fuertes[fuertes.dist_m <= 1000].to_crs(4326)
+
+    # personas
+    densidad = pob / km2_celda
+    cols = slice(max(int((lim[0] - t.c) / t.a), 0), int((lim[2] - t.c) / t.a) + 1)
+    filas_ = slice(max(int((lim[3] - t.f) / t.e), 0), int((lim[1] - t.f) / t.e) + 1)
+    vmax = max(np.nanmax(densidad[filas_, cols]), 1)
+    im = ax_p.imshow(densidad, extent=ext_1km, cmap="Purples", vmin=0, vmax=vmax, interpolation="nearest")
+    quem.plot(ax=ax_p, color="none", edgecolor="#7a2e1f", linewidth=1.2)
+    gpd.GeoSeries([z.loc["hasta 1 km"].geometry], crs=4326).boundary.plot(ax=ax_p, color="#444", linewidth=0.8, linestyle="--")
+    plt.colorbar(im, ax=ax_p, shrink=0.7, label="personas por km² (WorldPop, celdas de ~1 km)")
+    ax_p.legend(handles=[Patch(fc="none", ec="#7a2e1f", lw=1.2, label="área quemada"),
+                         Line2D([], [], color="#444", ls="--", label="borde de 1 km")], loc="lower left", fontsize=7.5)
+    ax_p.set_title(f"{inc} · PERSONAS estimadas (WorldPop)\n~{z.loc['hasta 1 km'].personas:,.0f} a ≤ 1 km · "
+                   f"~{z.loc['dentro del área quemada'].personas:,.0f} dentro del área quemada", fontsize=9.5)
+
+    # edificaciones
+    quem.plot(ax=ax_e, color="#d9a57f", edgecolor="#7a2e1f", linewidth=0.4)
+    gpd.GeoSeries([z.loc["hasta 1 km"].geometry], crs=4326).boundary.plot(ax=ax_e, color="#444", linewidth=0.8, linestyle="--")
+    lejos = fuertes[fuertes.dist_m > 1000].to_crs(4326)
+    ax_e.scatter(lejos.geometry.x, lejos.geometry.y, s=1, c="#b8c0c6")
+    for etiqueta, lo, hi, color in FRANJAS:
+        sel = cerca[(cerca.dist_m > lo) & (cerca.dist_m <= hi)] if lo else cerca[cerca.dist_m <= hi]
+        ax_e.scatter(sel.geometry.x, sel.geometry.y, s=6, c=color)
+    ax_e.legend(handles=[Patch(fc="#d9a57f", ec="#7a2e1f", label="área quemada"),
+                         Line2D([], [], color="#444", ls="--", label="borde de 1 km")]
+                + [Line2D([], [], marker="o", ls="", color=c, label=f"{e} ({len(cerca[(cerca.dist_m > lo) & (cerca.dist_m <= hi)] if lo else cerca[cerca.dist_m <= hi])})")
+                   for e, lo, hi, c in FRANJAS]
+                + [Line2D([], [], marker="o", ls="", color="#b8c0c6", label="a más de 1 km")],
+                loc="upper left", bbox_to_anchor=(0, -0.01), ncol=2, fontsize=7.5, frameon=False)
+    ax_e.set_title(f"{inc} · EDIFICACIONES detectadas (Open Buildings, confianza ≥ 0,75)\n"
+                   f"{z.loc['hasta 1 km'].edif_075:,.0f} a ≤ 1 km del área quemada", fontsize=9.5)
+    for ax in (ax_p, ax_e):
+        ax.set_xlim(lim[0], lim[2]); ax.set_ylim(lim[1], lim[3])
+        ax.set_aspect(1 / np.cos(np.radians((lim[1] + lim[3]) / 2)))
+        ax.set_xticks([]); ax.set_yticks([])
+fig.suptitle("¿A quién alcanza el fuego? Personas (modelo WorldPop) frente a edificaciones (detectadas en imágenes)", fontsize=11)
+fig.savefig(FIG / "04_personas_viviendas.png", dpi=150); plt.show()
 
 # %% [markdown]
 # ## Lectura

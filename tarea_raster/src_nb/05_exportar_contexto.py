@@ -1,10 +1,10 @@
 # %% [markdown]
-# # Tarea raster · 5. Exportar para el tablero y contrastar con cifras oficiales
+# # Incendios en el Perú, octubre de 2026 · 5. Exportar para el tablero y contrastar con cifras oficiales
 #
-# | Paso | Qué hacemos |
+# | Etapa | Qué hacemos |
 # |---|---|
-# | 7 · Exportar | Un solo `tablero.json` con todo lo que muestra el tablero (`app.py`) |
-# | 8 · Contexto | Cifras oficiales del COEN-INDECI frente a nuestras mediciones, mostradas lado a lado y **sin sumarlas** |
+# | Exportar | Un solo `tablero.json` con todo lo que muestra el tablero (`app.py`) |
+# | Contexto | Cifras oficiales del COEN-INDECI frente a nuestras mediciones, mostradas lado a lado y **sin sumarlas** |
 
 # %%
 import json
@@ -19,7 +19,7 @@ from rasterstats import zonal_stats
 from comun import RAW, PROC, CORTE, CRS_METRICO
 
 # %% [markdown]
-# ## Paso 8 · Cifras oficiales
+# ## Cifras oficiales
 #
 # Se buscaron los reportes complementarios del COEN-INDECI de octubre de 2026 para los dos
 # distritos (portal.indeci.gob.pe, revisado el 21/10/2026).
@@ -34,7 +34,7 @@ from comun import RAW, PROC, CORTE, CRS_METRICO
 # y la tarde del 15/10. El área oficial (200 ha) es menor que la medida con Sentinel-2 (425–929 ha).
 # Esto puede deberse a que la cifra oficial es una evaluación rápida en campo (EDAN) del 15/10 y a
 # que en pastizal es difícil estimar a pie la extensión. No se suman ni se promedian: se muestran
-# juntas, como en el monitor del profesor.
+# juntas, porque miden cosas distintas con métodos distintos.
 #
 # **Que Huanoquite no tenga reporte** también es un dato: un incendio de 400–900 ha en pastizal, sin
 # daños a personas, puede no llegar al registro nacional. Las cifras oficiales subestiman la quema en
@@ -53,7 +53,7 @@ OFICIAL = [
 pd.DataFrame(OFICIAL)[["incendio", "ha_oficial", "estado", "personas"]]
 
 # %% [markdown]
-# ## Paso 7 · Exportar
+# ## Exportar
 #
 # Las geometrías se simplifican (tolerancia 20 m, el tamaño del píxel) para que el JSON pese poco.
 
@@ -95,6 +95,40 @@ for inc in quemado.incendio.unique():
     edif_cerca[inc] = e[["longitude", "latitude", "dist_m"]].round(5).values.tolist()
     print(f"{inc}: {len(e)} edificaciones a ≤ 1 km")
 
+# %% [markdown]
+# Para el tablero también exportamos, por incendio:
+#
+# - las **celdas de WorldPop** (~1 km) alrededor del área quemada, como cuadrados con su densidad
+#   (personas por km²), para mostrarlas separadas de las edificaciones;
+# - una **grilla de relieve** (80 m) con el dNBR, para el 3D interactivo.
+
+# %%
+import rasterio
+from shapely.geometry import box
+
+celdas_pob, relieve = {}, {}
+with rasterio.open(RAW / "worldpop_per_2020_1km.tif") as src:
+    for inc in quemado.incendio.unique():
+        amplia = quemado[(quemado.incendio == inc) & (quemado.cifra == "amplia")].to_crs(CRS_METRICO).geometry.iloc[0]
+        caja = gpd.GeoSeries([amplia.buffer(2500)], crs=CRS_METRICO).to_crs(4326).total_bounds
+        ventana = rasterio.windows.from_bounds(*caja, transform=src.transform).round_offsets().round_lengths()
+        pob = src.read(1, window=ventana, masked=True).filled(0)
+        t = src.window_transform(ventana)
+        km2 = abs(t.a * t.e) * 111.32 * 110.57 * np.cos(np.radians(caja[1]))
+        filas = []
+        for i in range(pob.shape[0]):
+            for j in range(pob.shape[1]):
+                x0, y0 = t * (j, i)
+                x1, y1 = t * (j + 1, i + 1)
+                filas.append({"poligono": [[x0, y0], [x1, y0], [x1, y1], [x0, y1]],
+                              "personas": round(float(pob[i, j]), 1), "densidad": round(float(pob[i, j] / km2), 1)})
+        celdas_pob[inc] = filas
+        r = np.load(PROC / f"relieve_{inc.lower()}.npz")
+        relieve[inc] = {"z": np.round(r["z"], 0).tolist(), "dnbr": np.round(np.nan_to_num(r["dnbr"], nan=0), 2).tolist(),
+                        "x_km": np.round((r["x"] - r["x"].min()) / 1000, 2).tolist(),
+                        "y_km": np.round((r["y"] - r["y"].min()) / 1000, 2).tolist()}
+        print(f"{inc}: {len(filas)} celdas WorldPop · relieve {r['z'].shape}")
+
 # %%
 ID_INCENDIO = {"Livitaca": 166, "Huanoquite": 12}                   # los mismos del notebook 3
 casos = {}
@@ -109,13 +143,15 @@ for inc, d in dnbr.items():
         "focos": f[["longitude", "latitude", "t"]].values.tolist(),
         "edificaciones_1km": edif_cerca[inc],
         "oficial": next(o for o in OFICIAL if o["incendio"] == inc),
+        "worldpop_celdas": celdas_pob[inc],
+        "relieve": relieve[inc],
     }
 
 DECISIONES = [
     ("Datos", "Focos de los 3 satélites VIIRS (S-NPP, NOAA-20, NOAA-21) del 14 al 21 de octubre", "Más pasadas al día = menos fuegos sin detectar"),
     ("Limpieza", "Quitar focos de confianza baja, a < 5 km de volcanes y fuentes fijas (mismo píxel ≥ 5 de 8 días)", "Un foco de calor no es un incendio; una chimenea no se mueve"),
-    ("Incendio", "Focos a ≤ 1 km y ≤ 48 h entre sí = un incendio; se analizan los de huella > 100 ha", "Regla del monitor del profesor"),
-    ("Ranking nacional", "Personas a 5 km de los focos de cada incendio (WorldPop)", "Convención de 'población cercana' del monitor; comparable entre los 107 incendios"),
+    ("Incendio", "Focos a ≤ 1 km y ≤ 48 h entre sí = un incendio; se analizan los de huella > 100 ha", "VIIRS mide en píxeles de 375 m y un fuego puede apagarse de día y reavivarse de noche"),
+    ("Ranking nacional", "Personas a 5 km de los focos de cada incendio (WorldPop)", "Radio convencional de 'población cercana', comparable entre los 107 incendios"),
     ("Casos", "Livitaca y Huanoquite (Cusco) en vez de Río Tambo o Pucallpa", "En la selva las nubes tapan 33–99 % después del fuego"),
     ("Nubes", "Imagen 'antes' de Huanoquite como compuesto de 10, 7 y 5 de octubre", "Las nubes se mueven; el paisaje antes del fuego casi no cambia"),
     ("Área quemada", "dNBR sembrado con focos: manchas continuas de dNBR ≥ umbral que tocan a ≤ 1 km un foco", "Incluye lo que VIIRS no vio y excluye cambios lejanos"),

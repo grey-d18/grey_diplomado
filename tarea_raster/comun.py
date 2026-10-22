@@ -1,4 +1,4 @@
-"""Rutas y funciones compartidas por los notebooks de la tarea raster."""
+"""Rutas y funciones compartidas por los notebooks del estudio de incendios."""
 from pathlib import Path
 
 import geopandas as gpd
@@ -41,7 +41,7 @@ def leer_focos() -> gpd.GeoDataFrame:
 
 
 def agrupar_incendios(focos: gpd.GeoDataFrame, km: float = 1.0, horas: float = 48) -> np.ndarray:
-    """Un incendio = focos conectados a ≤ km y ≤ horas entre sí (regla del monitor del profesor)."""
+    """Un incendio = focos conectados a ≤ km y ≤ horas entre sí (VIIRS mide en píxeles de 375 m; un fuego puede reavivarse al día siguiente)."""
     m = focos.to_crs(CRS_METRICO)
     grafo = radius_neighbors_graph(np.c_[m.geometry.x, m.geometry.y], km * 1000,
                                    mode="connectivity").tocoo()

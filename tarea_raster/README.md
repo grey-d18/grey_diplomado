@@ -1,7 +1,7 @@
-# Tarea raster – Incendios en el Perú vistos desde el espacio
+# Incendios en el Perú vistos desde el espacio
 
 Ciencia de Datos con Python · Diplomado en Data Science (QLAB) · 21 de octubre de 2026
-**Reto D – ¿A quién afecta?**, con lectura antropológica.
+¿A quién alcanza el fuego? Una lectura antropológica con datos satelitales.
 
 ## 1. Pregunta
 
@@ -24,19 +24,19 @@ de comunidades campesinas quechuas del Cusco?**
 | Relieve | Copernicus DEM GLO-30 | — | Raster |
 | Edificaciones | Google Open Buildings v3 (bloques S2 `911` y `917`) | 2023 | Puntos |
 
-## 3. Método (los 8 pasos del monitor del profesor)
+## 3. Método y decisiones
 
-| Paso | Notebook | Qué se hizo y qué se decidió |
+| Etapa | Notebook | Qué se hizo y qué se decidió |
 |---|---|---|
-| 1 · Descargar | `01_datos_mapa_base.ipynb` | Todo público y sin clave; cada archivo se baja una vez |
-| 2 · Mapa base | `01` | Distritos y relieve |
-| 3 · Cobertura | `01`, `03` | WorldCover; en el notebook 3 se cruza a 20 m con el área quemada |
-| 4 · Focos | `02_focos_incendios.ipynb` | 9 949 → 8 587 focos: −1 336 de confianza baja, −26 fuentes fijas (mismo píxel de 375 m con calor en ≥ 5 de 8 días), 0 cerca de volcanes |
-| 5 · Incendios | `02` | Focos a ≤ 1 km **y** ≤ 48 h = un incendio (grafo + componentes conectadas). Huella = píxeles de 375 m × 14,06 ha. Se analizan los de huella > 100 ha |
-| 6 · Raster | `03_raster_cusco.ipynb` | NBR con B8A y B12 (20 m), reflectancia corregida (offset −1000), máscara SCL de nubes, sombras y agua. **dNBR sembrado con focos**: manchas continuas con dNBR ≥ umbral que tocan a ≤ 1 km un foco VIIRS. Dos umbrales: 0,27 (conservador) y 0,10 (amplio, para pastizal) |
-| Reto D | `04_personas_viviendas.ipynb` | Edificaciones (Open Buildings, confianza ≥ 0,75) y personas (WorldPop repartido en sub-celdas de 100 m) dentro del área quemada amplia, a ≤ 100 m, ≤ 500 m y ≤ 1 km |
-| 7 · Exportar | `05_exportar_contexto.ipynb` | `datos/procesados/tablero.json` (0,5 MB), que lee el tablero `app.py` |
-| 8 · Contexto | `05` | Reportes COEN-INDECI frente a las mediciones satelitales, lado a lado y sin sumarlos |
+| Descargar | `01_datos_mapa_base.ipynb` | Todo público y sin clave; cada archivo se baja una vez |
+| Mapa base | `01` | Distritos, relieve sombreado (Copernicus DEM) y focos de la región |
+| Cobertura | `01`, `03` | WorldCover; en el notebook 3 se cruza a 20 m con el área quemada |
+| Focos | `02_focos_incendios.ipynb` | 9 949 → 8 587 focos: −1 336 de confianza baja, −26 fuentes fijas (mismo píxel de 375 m con calor en ≥ 5 de 8 días), 0 cerca de volcanes |
+| Incendios | `02` | Focos a ≤ 1 km **y** ≤ 48 h = un incendio (grafo + componentes conectadas). VIIRS mide en píxeles de 375 m y un fuego puede reavivarse al día siguiente. Huella = píxeles de 375 m × 14,06 ha. Se analizan los de huella > 100 ha (por debajo, la mayoría son quemas agrícolas) |
+| Área quemada y relieve | `03_raster_cusco.ipynb` | NBR con B8A y B12 (20 m), reflectancia corregida (offset −1000), máscara SCL de nubes, sombras y agua. **dNBR sembrado con focos**: manchas continuas con dNBR ≥ umbral que tocan a ≤ 1 km un foco VIIRS. Dos umbrales: 0,27 (conservador) y 0,10 (amplio, para pastizal). Relieve 3D con Copernicus DEM a 30 m |
+| Personas y viviendas | `04_personas_viviendas.ipynb` | Edificaciones (Open Buildings, confianza ≥ 0,75) y personas (WorldPop repartido en sub-celdas de 100 m) dentro del área quemada amplia, a ≤ 100 m, ≤ 500 m y ≤ 1 km |
+| Exportar | `05_exportar_contexto.ipynb` | `datos/procesados/tablero.json` (0,5 MB), que lee el tablero `app.py` |
+| Contexto | `05` | Reportes COEN-INDECI frente a las mediciones satelitales, lado a lado y sin sumarlos |
 
 Imágenes Sentinel-2 usadas (nubes medidas **dentro de la zona del incendio** con la capa SCL):
 
@@ -128,7 +128,14 @@ puede medir la cicatriz.
 
 ## 6. Tablero
 
-`app.py` (Streamlit) muestra el panorama nacional, qué se quemó, a quién alcanza (con el
+**Monitor web:** https://claude.ai/artifact/A1GKkoKBUpmC56JLsbdTiP
+
+Tiene seis pestañas: panorama nacional, ¿qué se quemó? (pastizal o bosque), ¿a quién alcanza?
+(edificaciones o personas, con el significado de cada distancia), relieve 3D, cifras oficiales y
+método y decisiones. La página está en `monitor/index.html`. Sus datos se arman con
+`monitor/preparar_datos.py`, que escribe `monitor/datos/*.json`.
+
+Respaldo local: `app.py` (Streamlit) muestra el panorama nacional, qué se quemó, a quién alcanza (con el
 significado de cada distancia), las cifras oficiales y la tabla de decisiones del método.
 
 ```bash
