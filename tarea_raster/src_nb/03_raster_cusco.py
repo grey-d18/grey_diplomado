@@ -334,3 +334,29 @@ for nombre, caso in CASOS.items():
                           "geometry": gpd.GeoSeries([caso[clave]], crs=caso["ref"].rio.crs).to_crs(4326).iloc[0]})
 gpd.GeoDataFrame(filas_geo, crs=4326).to_file(PROC / "area_quemada_cusco.gpkg", driver="GPKG")
 print("guardado:", PROC / "area_quemada_cusco.gpkg")
+
+# %% [markdown]
+# ## Resumen para el tablero
+#
+# Fechas, nubes, hectáreas y sensibilidad de cada incendio, en un JSON que lee el notebook 5.
+
+# %%
+import json
+resumen = {}
+for nombre, caso in CASOS.items():
+    nubes = {}
+    for it in caso["items_antes"] + [caso["item_despues"]]:
+        scl = recortar(it, "SCL", caso["caja"])
+        nubes[f"{it.datetime:%Y-%m-%d}"] = round(float(np.isin(scl, [3, 8, 9, 10]).sum() / (scl > 0).sum()) * 100, 1)
+    fila = incendios.loc[caso["incendio"]]
+    resumen[nombre] = {
+        "distrito": fila.distrito, "provincia": fila.provincia, "departamento": fila.departamento,
+        "fuego_viirs": [fila.inicio[:10], fila.ultimo[:10]], "focos": int(fila.focos), "huella_viirs_ha": float(fila.huella_ha),
+        "imagenes_antes": caso["antes"], "imagen_despues": caso["despues"], "nubes_pct": nubes,
+        "escenas": [it.id for it in caso["items_antes"] + [caso["item_despues"]]],
+        "ha_conservadora": round(float(caso["quemado_ha"]), 1), "ha_amplia": round(float(caso["quemado_amplio_ha"]), 1),
+        "severidad_ha": caso["severidad_ha"].round(1).to_dict(),
+        "sensibilidad_ha": sensibilidad[nombre].to_dict(),
+    }
+(PROC / "dnbr_resumen.json").write_text(json.dumps(resumen, ensure_ascii=False, indent=1))
+print(json.dumps(resumen["Livitaca"], ensure_ascii=False)[:400])

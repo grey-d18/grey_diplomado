@@ -34,8 +34,9 @@ de comunidades campesinas quechuas del Cusco?**
 | 4 · Focos | `02_focos_incendios.ipynb` | 9 949 → 8 587 focos: −1 336 de confianza baja, −26 fuentes fijas (mismo píxel de 375 m con calor en ≥ 5 de 8 días), 0 cerca de volcanes |
 | 5 · Incendios | `02` | Focos a ≤ 1 km **y** ≤ 48 h = un incendio (grafo + componentes conectadas). Huella = píxeles de 375 m × 14,06 ha. Se analizan los de huella > 100 ha |
 | 6 · Raster | `03_raster_cusco.ipynb` | NBR con B8A y B12 (20 m), reflectancia corregida (offset −1000), máscara SCL de nubes, sombras y agua. **dNBR sembrado con focos**: manchas continuas con dNBR ≥ umbral que tocan a ≤ 1 km un foco VIIRS. Dos umbrales: 0,27 (conservador) y 0,10 (amplio, para pastizal) |
-| 7 · Exportar | pendiente | JSON para el tablero |
-| 8 · Contexto | pendiente | Cifras oficiales y validación |
+| Reto D | `04_personas_viviendas.ipynb` | Edificaciones (Open Buildings, confianza ≥ 0,75) y personas (WorldPop repartido en sub-celdas de 100 m) dentro del área quemada amplia, a ≤ 100 m, ≤ 500 m y ≤ 1 km |
+| 7 · Exportar | `05_exportar_contexto.ipynb` | `datos/procesados/tablero.json` (0,5 MB), que lee el tablero `app.py` |
+| 8 · Contexto | `05` | Reportes COEN-INDECI frente a las mediciones satelitales, lado a lado y sin sumarlos |
 
 Imágenes Sentinel-2 usadas (nubes medidas **dentro de la zona del incendio** con la capa SCL):
 
@@ -74,9 +75,39 @@ puede medir la cicatriz.
    visible en falso color. La huella VIIRS tampoco sirve como sustituto: da 267 ha en Livitaca y
    647 ha en Huanoquite.
 
+4. **El fuego quemó pastos y llegó a la puerta de pocas casas; el riesgo depende del patrón de
+   asentamiento.** Edificaciones de Open Buildings por distancia al borde del área quemada:
+
+   | Zona (decisión nuestra) | Qué significa | Livitaca | Huanoquite |
+   |---|---|---|---|
+   | Dentro del área quemada | Exposición directa: el fuego pasó por ahí | 2 | 2 |
+   | ≤ 100 m | Exposición directa: el fuego llegó "a la puerta" | **13** | 4 |
+   | ≤ 500 m | Riesgo directo: poblados que el fuego pudo alcanzar | 100 | **122** |
+   | ≤ 1 km | Medio de vida: familias cuyos pastos cercanos se quemaron | 216 | 171 |
+
+   En Livitaca (Chumbivilcas) las casas están **dispersas**: estancias familiares junto a sus pastos,
+   y por eso más casas quedan pegadas al fuego. En Huanoquite (Paruro) están **agrupadas**: el fuego
+   se detuvo a pocos cientos de metros de dos poblados. Exposición no es daño: el satélite no dice si
+   una casa se quemó. WorldPop, en cambio, pone ~100 personas dentro del área quemada, donde casi no
+   hay techos: a esta escala sirve menos que Open Buildings.
+
+   **Por qué no 5 km aquí:** el radio de 5 km del hallazgo 1 se mide desde los focos VIIRS y sirve
+   para el ranking nacional. Aquí medimos desde el área quemada de Sentinel-2; mezclar ambos daría
+   números que parecen comparables y no lo son.
+
+5. **Las cifras oficiales también se quedan cortas en la puna.** El COEN-INDECI (Reporte
+   complementario N.° 14391, 17/10/2026) registra el incendio de Livitaca en el CP Illayuyo:
+   inicio el 14/10 a las 14:30, extinguido el 16/10, **200 ha** de cobertura natural destruida y sin
+   daños a personas. Lugar y fechas coinciden con VIIRS, pero el área es menor que la satelital
+   (425–929 ha): es una evaluación rápida en campo (EDAN) del 15/10. De **Huanoquite no se encontró
+   reporte**: un incendio de 400–900 ha en pastizal, sin daños a personas, puede no llegar al
+   registro nacional.
+
 ![dNBR Livitaca y Huanoquite](figuras/03_dnbr_livitaca_huanoquite.png)
 
 ![Área quemada según cobertura](figuras/03_mapa_cobertura_quemada.png)
+
+![Personas y viviendas](figuras/04_personas_viviendas.png)
 
 ![Personas a 5 km de incendios > 100 ha](figuras/02_mapa_personas_5km.png)
 
@@ -90,14 +121,25 @@ puede medir la cicatriz.
 - **WorldCover es de 2021**: la cobertura pudo cambiar (nuevas chacras, pasto convertido).
 - **WorldPop es un modelo, no un censo.** Reparte la población del censo según luces, caminos y
   cobertura, y puede subestimar a la población rural dispersa.
+- **Open Buildings cuenta techos, no hogares**: incluye cocinas, depósitos y corrales techados. Con
+  confianza ≥ 0,65 en vez de 0,75, las cifras suben (Livitaca ≤ 500 m: 209), pero el patrón no cambia.
 - La imagen posterior de Huanoquite (17/10) coincide con los últimos focos: parte del incendio
   pudo seguir creciendo después.
 
-## 6. Cómo reproducir
+## 6. Tablero
+
+`app.py` (Streamlit) muestra el panorama nacional, qué se quemó, a quién alcanza (con el
+significado de cada distancia), las cifras oficiales y la tabla de decisiones del método.
+
+```bash
+streamlit run app.py
+```
+
+## 7. Cómo reproducir
 
 ```bash
 pip install -r requirements.txt
-jupyter nbconvert --to notebook --execute --inplace 01_datos_mapa_base.ipynb 02_focos_incendios.ipynb 03_raster_cusco.ipynb
+jupyter nbconvert --to notebook --execute --inplace 01_datos_mapa_base.ipynb 02_focos_incendios.ipynb 03_raster_cusco.ipynb 04_personas_viviendas.ipynb 05_exportar_contexto.ipynb
 ```
 
 `comun.py` guarda las rutas y las funciones compartidas. `src_nb/` tiene el código de cada

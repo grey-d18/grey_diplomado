@@ -1,0 +1,88 @@
+{
+ "Livitaca": {
+  "distrito": "LIVITACA",
+  "provincia": "CHUMBIVILCAS",
+  "departamento": "CUSCO",
+  "fuego_viirs": [
+   "2026-10-15",
+   "2026-10-15"
+  ],
+  "focos": 28,
+  "huella_viirs_ha": 267.1875,
+  "imagenes_antes": [
+   "2026-10-07"
+  ],
+  "imagen_despues": "2026-10-17",
+  "nubes_pct": {
+   "2026-10-07": 0.0,
+   "2026-10-17": 0.0
+  },
+  "escenas": [
+   "S2A_MSIL2A_20261007T145941_R039_T19LBE_20261007T224605",
+   "S2A_MSIL2A_20261017T145731_R039_T19LBE_20261018T001002"
+  ],
+  "ha_conservadora": 425.5,
+  "ha_amplia": 928.6,
+  "severidad_ha": {
+   "Baja": 241.0,
+   "Moderada-baja": 312.1,
+   "Moderada-alta": 113.2,
+   "Alta": 0.2
+  },
+  "sensibilidad_ha": {
+   "≥ 0,27 · sembrado con focos (cifra conservadora)": 425.0,
+   "≥ 0,10 · sembrado con focos (cifra amplia)": 929.0,
+   "≥ 0,27 · solo ≤ 1 km de focos": 305.0,
+   "≥ 0,10 · ≤ 1 km de focos": 546.0,
+   "≥ 0,44 · ≤ 1 km de focos": 90.0,
+   "≥ 0,27 · toda la caja (focos + 4 km)": 488.0,
+   "huella VIIRS (píxeles de 375 m)": 267.0
+  }
+ },
+ "Huanoquite": {
+  "distrito": "HUANOQUITE",
+  "provincia": "PARURO",
+  "departamento": "CUSCO",
+  "fuego_viirs": [
+   "2026-10-14",
+   "2026-10-17"
+  ],
+  "focos": 80,
+  "huella_viirs_ha": 646.875,
+  "imagenes_antes": [
+   "2026-10-10",
+   "2026-10-07",
+   "2026-10-05"
+  ],
+  "imagen_despues": "2026-10-17",
+  "nubes_pct": {
+   "2026-10-10": 27.9,
+   "2026-10-07": 4.3,
+   "2026-10-05": 0.0,
+   "2026-10-17": 0.2
+  },
+  "escenas": [
+   "S2B_MSIL2A_20261010T145729_R039_T18LZK_20261010T200116",
+   "S2A_MSIL2A_20261007T145941_R039_T18LZK_20261007T224605",
+   "S2C_MSIL2A_20261005T145731_R039_T18LZK_20261005T175220",
+   "S2A_MSIL2A_20261017T145731_R039_T18LZK_20261018T001002"
+  ],
+  "ha_conservadora": 408.6,
+  "ha_amplia": 894.9,
+  "severidad_ha": {
+   "Baja": 472.2,
+   "Moderada-baja": 312.7,
+   "Moderada-alta": 94.6,
+   "Alta": 1.4
+  },
+  "sensibilidad_ha": {
+   "≥ 0,27 · sembrado con focos (cifra conservadora)": 409.0,
+   "≥ 0,10 · sembrado con focos (cifra amplia)": 895.0,
+   "≥ 0,27 · solo ≤ 1 km de focos": 403.0,
+   "≥ 0,10 · ≤ 1 km de focos": 876.0,
+   "≥ 0,44 · ≤ 1 km de focos": 96.0,
+   "≥ 0,27 · toda la caja (focos + 4 km)": 421.0,
+   "huella VIIRS (píxeles de 375 m)": 647.0
+  }
+ }
+}
