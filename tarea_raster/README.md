@@ -128,12 +128,16 @@ puede medir la cicatriz.
 
 ## 6. Tablero
 
-**Monitor web:** https://claude.ai/artifact/A1GKkoKBUpmC56JLsbdTiP
+**Monitor web:** https://claude.ai/artifact/AYzseMtXY9JuCKQfBvsJpc
 
-Tiene seis pestañas: panorama nacional, ¿qué se quemó? (pastizal o bosque), ¿a quién alcanza?
-(edificaciones o personas, con el significado de cada distancia), relieve 3D, cifras oficiales y
-método y decisiones. La página está en `monitor/index.html`. Sus datos se arman con
-`monitor/preparar_datos.py`, que escribe `monitor/datos/*.json`.
+Es una página de lectura vertical con seis secciones:
+- **El país:** mapa con relieve de los 107 incendios grandes y ranking por hectáreas o por personas a 5 km.
+- **Qué se quemó:** cortina antes/después sobre Sentinel-2 en color real, con el dNBR, el borde del área quemada y los focos VIIRS. Muestra el rango de hectáreas, pastizal frente a bosque, y cuánto cambia la cifra según cada decisión.
+- **A quién alcanza:** edificaciones o personas alrededor del área quemada, con el significado de cada distancia.
+- **El terreno:** relieve 3D (Copernicus DEM) con la imagen del 17 de octubre encima.
+- **Cifras oficiales**, y **método y decisiones**.
+
+La página está en `monitor/index.html`. `monitor/preparar_datos.py` escribe `monitor/datos/*.json`, y `monitor/preparar_imagenes.py` escribe las imágenes y la malla 3D en `monitor/web/`.
 
 Respaldo local: `app.py` (Streamlit) muestra el panorama nacional, qué se quemó, a quién alcanza (con el
 significado de cada distancia), las cifras oficiales y la tabla de decisiones del método.

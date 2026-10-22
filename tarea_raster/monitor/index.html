@@ -1,579 +1,884 @@
+<title>Monitor de incendios Cusco</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@500;600;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
-.mx { font-family: var(--font-anthropic-sans); display: flex; flex-direction: column; gap: var(--cds-gap-lg); }
-.mx-head { display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
-.mx-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
-.mx-take { color: var(--color-fg-muted); margin: 0; max-width: 70ch; }
-.mx-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr)); gap: var(--cds-gap-md); }
-.mx-kpi { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
-.mx-kpi .v { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
-.mx-kpi .l { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.mx-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
-.mx-tab { font: inherit; background: none; border: 0; border-bottom: 2px solid transparent; padding: var(--cds-pad-sm) var(--cds-pad-md); color: var(--color-fg-muted); cursor: pointer; }
-.mx-tab[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
-.mx-tab:focus-visible, .mx-pill:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
-.mx-page { display: flex; flex-direction: column; gap: var(--cds-gap-md); }
-.mx-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: var(--cds-gap-md); }
-.mx-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-sm); min-width: 0; }
-.mx-card h3 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
-.mx-note { margin: 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); max-width: 75ch; }
-.mx-text { margin: 0; max-width: 75ch; line-height: 1.55; }
-.mx-pills { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); align-items: center; }
-.mx-pill { font: inherit; font-size: var(--cds-font-size-caption); border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 999px; padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; }
-.mx-pill[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
-.mx-pills .lab { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin-right: var(--cds-gap-xs); }
-.mx-map { position: relative; width: 100%; min-height: 26rem; }
-.mx-map svg { display: block; }
-.mx-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-lg); font-size: var(--cds-font-size-caption); color: var(--color-fg); }
-.mx-legend span { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); }
-.mx-sw { display: inline-block; width: 0.85rem; height: 0.65rem; border-radius: 2px; }
-.mx-dot { display: inline-block; width: 0.6rem; height: 0.6rem; border-radius: 50%; }
-.mx-dash { display: inline-block; width: 1rem; border-top: 2px dashed var(--color-fg); }
-.mx-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); max-width: 16rem; }
-.mx-tip .t { color: var(--cds-text-secondary); }
-.mx-callout { border: 1px solid var(--color-border-line); border-left: 3px solid var(--color-warn); border-radius: var(--cds-radius); padding: var(--cds-pad-md) var(--cds-pad-lg); display: flex; flex-direction: column; gap: var(--cds-gap-xs); }
-.mx-callout p { margin: 0; max-width: 80ch; line-height: 1.5; }
-.mx-tablebox { overflow: auto; max-height: 26rem; }
-.mx table { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
-.mx th, .mx td { text-align: left; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; }
-.mx th { position: sticky; top: 0; background: var(--color-panel); color: var(--color-fg-muted); font-weight: var(--cds-font-weight-medium); }
-.mx td.n, .mx th.n { text-align: right; }
-.mx-big { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
-.mx-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr)); gap: var(--cds-gap-md); }
-.mx-pair > div { display: flex; flex-direction: column; gap: 2px; }
-.mx-pair .l { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.mx-3d { position: relative; width: 100%; min-height: 24rem; }
-.mx-3d canvas { display: block; width: 100%; cursor: grab; }
-.mx-range { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.mx-range input { flex: 1; max-width: 18rem; }
-.mx-fail { display: flex; align-items: center; justify-content: center; gap: var(--cds-gap-xs); color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: inherit; }
-.mx-fail::before { content: ""; width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--color-bad); }
-[data-dash-source-state=empty] { color: transparent; }
-[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-.mx ul { margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: var(--cds-gap-xs); max-width: 80ch; }
-.mx a { color: inherit; }
+/* Informe de lectura vertical: encabezado con cifras → país → qué se quemó → a quién alcanza → terreno → cifras oficiales → método.
+   Una sola columna ancha; cada sección abre con su pregunta y su respuesta corta, luego el mapa y los datos al lado. */
+:root {
+  --bg: #f5f6f4;
+  --panel: #ffffff;
+  --panel-2: #eef0ed;
+  --ink: #1b2420;
+  --ink-2: #47524c;
+  --ink-3: #6f7a74;
+  --line: #dde2de;
+  --line-2: #c3cbc6;
+  --accent: #1f5c4f;          /* verde andino: navegación y controles */
+  --accent-soft: #e2eeea;
+  --fuego: #c8461b;           /* lo quemado */
+  --pasto: #b88a1c;           /* pastizal */
+  --bosque: #2f6b3f;
+  --otros: #8a8f8c;
+  --pob: #6b4c9a;             /* personas (WorldPop) */
+  --e-directa: #c81e1e;
+  --e-riesgo: #e07b1a;
+  --e-vida: #2a5fa8;
+  --tierra: #e9ebe6;
+  --mar: #dfe7ea;
+  --aviso: #8a5a00;
+  --sombra: 0 1px 2px rgb(27 36 32 / .06), 0 4px 14px rgb(27 36 32 / .07);
+  --f-titulo: "Libre Franklin", "Helvetica Neue", Arial, sans-serif;
+  --f-texto: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-dato: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --r: 8px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111614; --panel: #181f1c; --panel-2: #1f2824; --ink: #e8ece9; --ink-2: #b2bcb6; --ink-3: #87918b;
+    --line: #2a3430; --line-2: #3b4842; --accent: #7cc4ad; --accent-soft: #1c302a;
+    --fuego: #f07a4a; --pasto: #d9ad45; --bosque: #6fbf84; --otros: #9aa19d; --pob: #a88bd6;
+    --e-directa: #f0605a; --e-riesgo: #f2a04a; --e-vida: #6f9fe0; --tierra: #1d2522; --mar: #121a1d; --aviso: #e0b04a;
+    --sombra: 0 1px 2px rgb(0 0 0 / .4), 0 4px 14px rgb(0 0 0 / .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111614; --panel: #181f1c; --panel-2: #1f2824; --ink: #e8ece9; --ink-2: #b2bcb6; --ink-3: #87918b;
+  --line: #2a3430; --line-2: #3b4842; --accent: #7cc4ad; --accent-soft: #1c302a;
+  --fuego: #f07a4a; --pasto: #d9ad45; --bosque: #6fbf84; --otros: #9aa19d; --pob: #a88bd6;
+  --e-directa: #f0605a; --e-riesgo: #f2a04a; --e-vida: #6f9fe0; --tierra: #1d2522; --mar: #121a1d; --aviso: #e0b04a;
+  --sombra: 0 1px 2px rgb(0 0 0 / .4), 0 4px 14px rgb(0 0 0 / .3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-texto); font-size: 1.0625rem; line-height: 1.55; margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--panel); }
+h1, h2, h3 { font-family: var(--f-titulo); margin: 0; text-wrap: balance; color: var(--ink); }
+h2 { font-size: clamp(1.45rem, 2.4vw, 1.9rem); font-weight: 750; letter-spacing: -0.01em; line-height: 1.15; }
+h3 { font-size: 1.05rem; font-weight: 700; line-height: 1.25; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.etiqueta { font-family: var(--f-titulo); font-size: .72rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-3); }
+
+/* navegación */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--panel) 94%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.nav-in { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; align-items: center; gap: 4px 20px; min-height: 52px; flex-wrap: wrap; }
+.marca { font-family: var(--f-titulo); font-weight: 800; font-size: .98rem; color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.marca svg { flex: none; }
+.nav nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1 1 auto; min-width: 0; }
+.nav nav::-webkit-scrollbar { display: none; }
+.nav nav a { color: var(--ink-2); text-decoration: none; font-size: .9rem; font-weight: 600; padding: 15px 9px 13px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.nav nav a:hover { color: var(--ink); }
+.nav nav a[aria-current="true"] { color: var(--ink); border-bottom-color: var(--fuego); }
+@media (max-width: 820px) { .nav nav { order: 3; flex-basis: 100%; margin-inline: -9px; } .nav nav a { padding-block: 9px 10px; } }
+
+/* página */
+.pagina { max-width: 1240px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 64px; display: grid; gap: 64px; }
+.pagina > section { scroll-margin-top: 72px; display: grid; gap: 20px; min-width: 0; }
+.cabeza { display: grid; gap: 8px; max-width: 78ch; }
+.cabeza p { color: var(--ink-2); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; overflow: hidden; }
+.panel-cab { padding: 14px 18px 12px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+.panel-cab p { font-size: .92rem; color: var(--ink-3); }
+.panel-cuerpo { padding: 16px 18px; display: grid; gap: 14px; }
+.pie { font-size: .85rem; color: var(--ink-3); padding: 10px 18px 12px; border-top: 1px solid var(--line); line-height: 1.7; }
+
+/* encabezado */
+.hero { padding-top: 44px; gap: 26px !important; }
+.hero .etiqueta { color: var(--fuego); }
+.hero h1 { font-size: clamp(2rem, 4.4vw, 3.1rem); font-weight: 800; line-height: 1.06; letter-spacing: -0.02em; max-width: 24ch; }
+.bajada { font-size: clamp(1.08rem, 1.5vw, 1.22rem); color: var(--ink-2); max-width: 66ch; line-height: 1.55; }
+.bajada b { color: var(--ink); font-weight: 650; }
+.cifras { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+.cifra { background: var(--panel); padding: 16px 18px 15px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.cifra .v { font-family: var(--f-titulo); font-weight: 800; font-size: clamp(1.6rem, 2.6vw, 2.15rem); line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.cifra .v small { font-size: .5em; font-weight: 700; color: var(--ink-3); margin-left: 3px; letter-spacing: 0; }
+.cifra .n { font-size: .92rem; color: var(--ink-2); line-height: 1.4; }
+.cifra.fuego .v { color: var(--fuego); }
+.cifra.pasto .v { color: var(--pasto); }
+@media (max-width: 900px) { .cifras { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.meta { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: .9rem; color: var(--ink-3); }
+.meta b { color: var(--ink-2); font-weight: 600; }
+
+/* controles */
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 999px; padding: 3px; background: var(--panel); gap: 2px; flex-wrap: wrap; justify-self: start; }
+.seg button { font: inherit; font-size: .92rem; font-weight: 600; color: var(--ink-2); background: none; border: 0; border-radius: 999px; padding: 6px 14px; cursor: pointer; min-height: 34px; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--panel); }
+.casillas { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; color: var(--ink-2); }
+.casillas label { display: inline-flex; gap: 7px; align-items: center; cursor: pointer; }
+.casillas input { accent-color: var(--accent); margin: 0; width: 16px; height: 16px; }
+.selector-caso { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 62px); z-index: 5; box-shadow: var(--sombra); }
+@media (max-width: 820px) { .selector-caso { top: calc(env(safe-area-inset-top, 0px) + 96px); } }
+
+/* mapas */
+.mapa { position: relative; background: var(--mar); overflow: hidden; touch-action: pan-y; }
+.mapa svg { display: block; width: 100%; height: auto; }
+.flot { position: absolute; z-index: 2; background: color-mix(in srgb, var(--panel) 93%, transparent); border: 1px solid var(--line); border-radius: 6px; box-shadow: var(--sombra); font-size: .82rem; color: var(--ink-2); }
+.leyenda { left: 10px; bottom: 10px; padding: 8px 10px; display: grid; gap: 4px; pointer-events: none; max-width: calc(100% - 20px); }
+.leyenda .f { display: flex; gap: 8px; align-items: center; }
+.zoom { right: 10px; top: 10px; display: grid; }
+.zoom button { font: inherit; font-size: 1.1rem; font-weight: 600; width: 34px; height: 34px; border: 0; background: none; color: var(--ink); cursor: pointer; }
+.zoom button + button { border-top: 1px solid var(--line); }
+.pt { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.cu { width: 14px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+.ln { width: 16px; height: 0; border-top: 2px dashed var(--ink); display: inline-block; flex: none; }
+.tip { position: absolute; z-index: 4; pointer-events: none; background: var(--panel); border: 1px solid var(--line-2); border-radius: 6px; box-shadow: var(--sombra); padding: 7px 10px; font-size: .85rem; line-height: 1.35; max-width: 240px; color: var(--ink); }
+.tip b { display: block; font-family: var(--f-titulo); font-size: .9rem; }
+.tip span { color: var(--ink-2); }
+.chip-img { position: absolute; top: 10px; z-index: 2; padding: 4px 9px; border-radius: 4px; background: rgb(15 20 18 / .72); color: #fff; font-size: .8rem; font-weight: 600; pointer-events: none; }
+.chip-img.izq { left: 10px; } .chip-img.der { right: 10px; }
+.cortina-ctrl { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--ink-3); padding: 10px 18px; border-top: 1px solid var(--line); }
+.cortina-ctrl input { flex: 1; accent-color: var(--fuego); min-width: 0; }
+.ley-item { display: inline-flex; gap: 6px; align-items: center; margin-right: 14px; white-space: nowrap; }
+
+/* rejillas */
+.rejilla { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 980px) { .rejilla { grid-template-columns: minmax(0, 1fr); } }
+.columna { display: grid; gap: 18px; min-width: 0; }
+
+/* ranking */
+.ranking ol { list-style: none; margin: 0; padding: 4px 0 6px; }
+.fila-r { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: 1.6em minmax(0, 1fr) auto; gap: 4px 10px; padding: 8px 18px; align-items: baseline; }
+.fila-r:hover, .fila-r[aria-current="true"] { background: var(--panel-2); }
+.fila-r:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.fila-r .k { color: var(--ink-3); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.fila-r .l { font-weight: 600; min-width: 0; }
+.fila-r .l small { font-weight: 400; color: var(--ink-3); font-size: .85rem; margin-left: 4px; }
+.fila-r .v { font-family: var(--f-dato); font-size: .88rem; white-space: nowrap; }
+.fila-r .barra { grid-column: 2 / 4; height: 4px; background: var(--panel-2); border-radius: 2px; overflow: hidden; }
+.fila-r .barra i { display: block; height: 100%; background: var(--fuego); border-radius: 2px; }
+.marca-caso { margin-left: 8px; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 1px 6px; border-radius: 3px; vertical-align: 2px; }
+
+/* bloques de lectura */
+.rango { display: grid; gap: 6px; }
+.rango .grande { font-family: var(--f-titulo); font-weight: 800; font-size: clamp(2rem, 3.6vw, 2.6rem); line-height: 1; letter-spacing: -0.02em; color: var(--fuego); font-variant-numeric: tabular-nums; }
+.rango .grande small { font-size: .45em; color: var(--ink-3); font-weight: 700; letter-spacing: 0; }
+.rango p { font-size: .95rem; color: var(--ink-2); }
+.texto { max-width: 70ch; color: var(--ink-2); }
+.nota-caja { border: 1px solid var(--line); background: var(--panel); border-radius: var(--r); padding: 14px 18px; font-size: .98rem; color: var(--ink-2); display: grid; gap: 6px; max-width: 90ch; }
+.nota-caja b { color: var(--ink); font-family: var(--f-titulo); }
+.aviso { display: flex; gap: 10px; align-items: start; padding: 12px 16px; border: 1px solid color-mix(in srgb, var(--aviso) 55%, var(--line)); border-radius: 6px; background: color-mix(in srgb, var(--aviso) 8%, var(--panel)); font-size: .97rem; color: var(--ink); max-width: 90ch; }
+.aviso::before { content: "i"; flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--aviso); color: var(--panel); font-weight: 800; display: grid; place-items: center; font-size: .8rem; font-family: var(--f-titulo); margin-top: 1px; }
+.franjas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.franja { border-top: 4px solid; padding: 10px 2px 0; display: grid; gap: 3px; align-content: start; }
+.franja h3 { font-size: 1rem; }
+.franja .d { font-family: var(--f-dato); font-size: .85rem; color: var(--ink-3); }
+.franja p { font-size: .95rem; color: var(--ink-2); }
+@media (max-width: 760px) { .franjas { grid-template-columns: minmax(0, 1fr); } }
+
+/* tablas */
+.tabla-caja { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--f-titulo); font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); background: var(--panel-2); }
+td.n { font-family: var(--f-dato); font-size: .88rem; font-variant-numeric: tabular-nums; }
+.celda-barra { display: grid; grid-template-columns: 2.6em minmax(30px, 1fr); gap: 8px; align-items: center; }
+.celda-barra span { text-align: right; }
+.celda-barra i { display: block; height: 8px; border-radius: 2px; min-width: 2px; }
+.decisiones td:first-child { font-weight: 650; color: var(--ink); white-space: nowrap; }
+.decisiones td { color: var(--ink-2); }
+.decisiones td:nth-child(2) { min-width: 18rem; }
+
+/* 3D */
+.vista3d { position: relative; background: linear-gradient(var(--panel-2), var(--panel)); }
+.vista3d canvas { display: block; width: 100%; cursor: grab; touch-action: pan-y; }
+.vista3d canvas:active { cursor: grabbing; }
+.ctrl3d { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; padding: 10px 18px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--ink-2); }
+.ctrl3d label { display: inline-flex; gap: 8px; align-items: center; }
+.ctrl3d input[type=range] { width: 140px; accent-color: var(--accent); }
+
+/* oficiales */
+.dos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 820px) { .dos { grid-template-columns: minmax(0, 1fr); } }
+.comparar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.comparar > div { display: grid; gap: 4px; padding: 12px 14px; border-radius: 6px; background: var(--panel-2); align-content: start; }
+.comparar .v { font-family: var(--f-titulo); font-weight: 800; font-size: clamp(1.3rem, 2.2vw, 1.7rem); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.comparar .v.sin { color: var(--ink-3); }
+.comparar .l { font-size: .85rem; color: var(--ink-3); }
+ul.lista { margin: 0; padding-left: 1.15rem; display: grid; gap: 6px; color: var(--ink-2); max-width: 80ch; }
+footer { border-top: 1px solid var(--line); padding-top: 18px; font-size: .88rem; color: var(--ink-3); display: grid; gap: 6px; }
+.cargando { padding: 48px 18px; color: var(--ink-3); text-align: center; font-size: .95rem; }
 </style>
 
-<div class="mx">
-  <header class="mx-head" id="inicio">
-    <h1 class="mx-title">¿A quién alcanza el fuego? Incendios en el Perú, 14–21 de octubre de 2026</h1>
-    <p class="mx-take" id="takeaway">
-      En la sierra del Cusco el fuego quemó entre
-      <b data-source="casos" data-field="ha_conservadora" data-where="incendio=Livitaca" class="dash-skeleton">—</b> y
-      <b data-source="casos" data-field="ha_amplia" data-where="incendio=Livitaca" class="dash-skeleton">—</b> ha en Livitaca y entre
-      <b data-source="casos" data-field="ha_conservadora" data-where="incendio=Huanoquite" class="dash-skeleton">—</b> y
-      <b data-source="casos" data-field="ha_amplia" data-where="incendio=Huanoquite" class="dash-skeleton">—</b> ha en Huanoquite, casi todo pastizal.
-      El impacto es sobre el forraje de familias ganaderas más que sobre las casas.
-    </p>
-  </header>
+<header class="nav">
+  <div class="nav-in">
+    <a class="marca" href="#inicio">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M1 16 L6.5 6 L9.5 11 L12 7 L17 16 Z" fill="var(--accent)"/><circle cx="12" cy="3.5" r="2.2" fill="var(--fuego)"/></svg>
+      Incendios Cusco 2026
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#pais">El país</a>
+      <a href="#quemado">Qué se quemó</a>
+      <a href="#alcance">A quién alcanza</a>
+      <a href="#terreno">El terreno</a>
+      <a href="#oficial">Cifras oficiales</a>
+      <a href="#metodo">Método</a>
+    </nav>
+  </div>
+</header>
 
-  <section class="mx-kpis" id="cifras">
-    <div class="mx-kpi"><span class="v dash-skeleton" data-source="nacional" data-field="incendios_100ha" data-row="0">—</span><span class="l">incendios con huella &gt; 100 ha en el país</span></div>
-    <div class="mx-kpi"><span class="v dash-skeleton" data-source="nacional" data-field="distritos" data-row="0">—</span><span class="l">distritos con esos incendios</span></div>
-    <div class="mx-kpi"><span class="v dash-skeleton" data-source="nacional" data-field="personas_5km" data-row="0">—</span><span class="l">personas a 5 km de alguno (WorldPop)</span></div>
-    <div class="mx-kpi"><span class="v dash-skeleton" data-source="nacional" data-field="focos_limpios" data-row="0">—</span><span class="l">focos de calor VIIRS tras la limpieza</span></div>
+<main class="pagina">
+  <section class="hero" id="inicio">
+    <div class="cabeza">
+      <span class="etiqueta">Cusco · incendios del 14 al 17 de octubre de 2026</span>
+      <h1>En la puna del Cusco ardió el pasto de las comunidades, no el bosque</h1>
+      <p class="bajada" id="bajada">Medimos con imágenes Sentinel-2 dos incendios de mediados de octubre en Livitaca (Chumbivilcas) y Huanoquite (Paruro), territorios de comunidades campesinas.</p>
+    </div>
+    <div class="cifras" id="cifras"></div>
+    <div class="meta" id="meta"></div>
   </section>
 
-  <nav class="mx-tabs" role="tablist" aria-label="Secciones">
-    <button class="mx-tab" role="tab" data-tab="nacional" aria-selected="true">Panorama nacional</button>
-    <button class="mx-tab" role="tab" data-tab="quemado" aria-selected="false">¿Qué se quemó?</button>
-    <button class="mx-tab" role="tab" data-tab="alcance" aria-selected="false">¿A quién alcanza?</button>
-    <button class="mx-tab" role="tab" data-tab="relieve" aria-selected="false">Relieve 3D</button>
-    <button class="mx-tab" role="tab" data-tab="oficial" aria-selected="false">Cifras oficiales</button>
-    <button class="mx-tab" role="tab" data-tab="metodo" aria-selected="false">Método y decisiones</button>
-  </nav>
-
-  <!-- PANORAMA NACIONAL -->
-  <section class="mx-page" id="nacional" data-page="nacional">
-    <div class="mx-grid">
-      <div class="mx-card" id="card-mapa-nacional">
-        <h3>Incendios grandes de la semana</h3>
-        <p class="mx-note">Cada círculo es un incendio (focos a ≤ 1 km y ≤ 48 h entre sí) con huella VIIRS &gt; 100 ha. Tamaño = huella; color = personas a 5 km de sus focos.</p>
-        <div class="mx-map" id="mapa-nacional" data-source="incendios departamentos"></div>
-        <div class="mx-legend">
-          <span><i class="mx-dot" style="background:#f2c14e"></i>pocas personas a 5 km</span>
-          <span><i class="mx-dot" style="background:#e07b39"></i>intermedio</span>
-          <span><i class="mx-dot" style="background:#c2271d"></i>muchas personas a 5 km</span>
-          <span><i class="mx-dot" style="background:none;border:1px solid var(--color-fg)"></i>círculo mayor = más hectáreas</span>
-        </div>
-      </div>
-      <div class="mx-card" id="card-rankings">
-        <h3>El fuego más grande no es el que toca a más gente</h3>
-        <p class="mx-note">Los 8 incendios con mayor huella y los 8 con más personas a 5 km.</p>
-        <div class="mx-tablebox">
-          <table id="tabla-huella" data-source="incendios" data-row-key="id">
-            <thead><tr><th data-field="distrito">Más grandes</th><th data-field="departamento">Depto.</th><th class="n" data-field="huella_ha">Huella (ha)</th><th class="n" data-field="personas_5km">Personas a 5 km</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <div class="mx-tablebox">
-          <table id="tabla-personas" data-source="incendios" data-row-key="id">
-            <thead><tr><th data-field="distrito">Más gente cerca</th><th data-field="departamento">Depto.</th><th class="n" data-field="huella_ha">Huella (ha)</th><th class="n" data-field="personas_5km">Personas a 5 km</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
+  <section id="pais">
+    <div class="cabeza">
+      <span class="etiqueta">El país en una semana</span>
+      <h2>El incendio más grande no es el que tiene más gente cerca</h2>
+      <p id="pais-texto">Agrupamos los focos de calor de los satélites VIIRS en incendios y medimos cuántas personas viven a 5 km de cada uno.</p>
     </div>
-    <div class="mx-callout">
-      <p><b>Cómo leer los 5 km.</b> Aquí se cuentan las personas (WorldPop) a 5 km de los <b>focos VIIRS</b> de cada incendio: un radio convencional de "población cercana" que permite comparar los 107 incendios entre sí. No mide daño: un foco de calor no es un incendio, y WorldPop es un modelo, no un censo.</p>
-    </div>
-  </section>
-
-  <!-- QUÉ SE QUEMÓ -->
-  <section class="mx-page" id="quemado" data-page="quemado" hidden>
-    <div class="mx-pills"><span class="lab">Incendio</span><button class="mx-pill" data-inc="Livitaca">Livitaca (Chumbivilcas)</button><button class="mx-pill" data-inc="Huanoquite">Huanoquite (Paruro)</button></div>
-    <div class="mx-card">
-      <div class="mx-pair">
-        <div><span class="l">Área quemada, Sentinel-2 (conservadora · dNBR ≥ 0,27)</span><span class="mx-big"><span class="por-inc dash-skeleton" data-source="casos" data-field="ha_conservadora">—</span> ha</span></div>
-        <div><span class="l">Área quemada, Sentinel-2 (amplia · dNBR ≥ 0,10)</span><span class="mx-big"><span class="por-inc dash-skeleton" data-source="casos" data-field="ha_amplia">—</span> ha</span></div>
-        <div><span class="l">Huella de los focos VIIRS</span><span class="mx-big"><span class="por-inc dash-skeleton" data-source="casos" data-field="huella_viirs_ha">—</span> ha</span></div>
-        <div><span class="l">Imágenes: antes → después</span><span><span class="por-inc" data-source="casos" data-field="imagen_antes">—</span> → <span class="por-inc" data-source="casos" data-field="imagen_despues">—</span></span><span class="l">nubes en la zona: <span class="por-inc" data-source="casos" data-field="nubes_antes_pct">—</span> % antes · <span class="por-inc" data-source="casos" data-field="nubes_despues_pct">—</span> % después</span></div>
+    <div class="rejilla">
+      <div class="panel">
+        <div class="panel-cab"><h3>Incendios con huella mayor a 100 ha</h3><p>Tamaño del círculo: hectáreas de la huella VIIRS. Color: personas a 5 km de sus focos. Pasa el cursor sobre un círculo para ver el detalle.</p></div>
+        <div class="mapa" id="mapa-pais"><div class="cargando">Cargando mapa…</div></div>
       </div>
-    </div>
-    <div class="mx-grid">
-      <div class="mx-card" id="card-mapa-quemado">
-        <h3>Dónde se quemó</h3>
-        <p class="mx-note">Manchas continuas de dNBR que tocan a ≤ 1 km algún foco VIIRS del incendio.</p>
-        <div class="mx-map" id="mapa-quemado" data-source="area_quemada focos_casos"></div>
-        <div class="mx-legend">
-          <span><i class="mx-sw" style="background:#7a2e1f"></i>quemado con dNBR ≥ 0,27 (conservador)</span>
-          <span><i class="mx-sw" style="background:#d9a57f"></i>quemado solo con dNBR ≥ 0,10 (amplio)</span>
-          <span><i class="mx-dot" style="background:#2f62b0"></i>foco de calor VIIRS</span>
+      <div class="panel ranking">
+        <div class="panel-cab">
+          <h3>Los diez primeros</h3>
+          <div class="seg" role="group" aria-label="Ordenar por">
+            <button data-orden="huella_ha" aria-pressed="true">Más hectáreas</button>
+            <button data-orden="personas_5km" aria-pressed="false">Más personas a 5 km</button>
+          </div>
         </div>
-      </div>
-      <div class="mx-card" id="card-cobertura">
-        <h3>Qué se quemó: pastizal o bosque</h3>
-        <p class="mx-note">Hectáreas quemadas según la cobertura previa (ESA WorldCover 2021). Barra oscura = cifra conservadora; clara = amplia.</p>
-        <div id="chart-cobertura" data-source="cobertura" style="min-height:12rem"></div>
-        <p class="mx-text"><b>Por qué un rango.</b> El dNBR mide cuánto verde se perdió. El bosque parte alto y cae mucho al quemarse; el pasto seco de la puna en octubre ya tiene poco verde y, aunque se queme por completo, cae poco. El umbral 0,27, pensado para bosques, deja fuera parte de esa quema; 0,10 la incluye, con más riesgo de contar pasto que solo se secó.</p>
-      </div>
-    </div>
-    <div class="mx-card" id="card-sensibilidad">
-      <h3>¿Cuánto cambia el número según la decisión?</h3>
-      <p class="mx-note">La computadora siempre da un número; lo importante es si es creíble.</p>
-      <div class="mx-tablebox">
-        <table id="tabla-sens" data-source="sensibilidad" data-row-key="incendio,variante">
-          <thead><tr><th data-field="variante">Decisión</th><th class="n" data-field="ha">Hectáreas</th></tr></thead>
-          <tbody></tbody>
-        </table>
+        <ol id="ranking"></ol>
+        <p class="pie">Toca una fila para ubicarla en el mapa. Los 5 km se miden desde los focos VIIRS y sirven para comparar incendios entre sí, no para medir daño.</p>
       </div>
     </div>
   </section>
 
-  <!-- A QUIÉN ALCANZA -->
-  <section class="mx-page" id="alcance" data-page="alcance" hidden>
-    <div class="mx-pills"><span class="lab">Incendio</span><button class="mx-pill" data-inc="Livitaca">Livitaca (Chumbivilcas)</button><button class="mx-pill" data-inc="Huanoquite">Huanoquite (Paruro)</button></div>
-    <div class="mx-callout">
-      <p><b>Las distancias son una decisión nuestra</b>, medidas desde el borde del área quemada (amplia):</p>
-      <p>• <b>Dentro y hasta 100 m → exposición directa</b>: el fuego pasó por ahí o llegó "a la puerta".<br>
-         • <b>Hasta 500 m → riesgo directo</b>: poblados que el fuego pudo alcanzar si seguía avanzando.<br>
-         • <b>Hasta 1 km → medio de vida</b>: familias cuyos pastos de uso diario se quemaron.</p>
-      <p>Aquí no se usan 5 km: ese radio se mide desde los focos VIIRS y sirve solo para el panorama nacional. <b>Exposición no es daño</b>: el satélite no dice si una casa se quemó.</p>
+  <section id="quemado">
+    <div class="cabeza">
+      <span class="etiqueta">Qué se quemó</span>
+      <h2>Casi todo fue pastizal de altura</h2>
+      <p>Comparamos la misma zona antes y después del fuego con Sentinel-2 y medimos la pérdida de vegetación con el índice dNBR. Arrastra sobre la imagen para mover la cortina entre el antes y el después.</p>
     </div>
-    <div class="mx-grid">
-      <div class="mx-card" id="card-mapa-alcance">
-        <h3 id="titulo-alcance">Edificaciones alrededor del área quemada</h3>
-        <div class="mx-pills"><span class="lab">Mostrar</span><button class="mx-pill" data-capa="edificaciones">Edificaciones (Open Buildings)</button><button class="mx-pill" data-capa="personas">Personas (WorldPop)</button></div>
-        <div class="mx-map" id="mapa-alcance" data-source="area_quemada edificaciones worldpop"></div>
-        <div class="mx-legend" id="leyenda-edif">
-          <span><i class="mx-sw" style="background:#d9a57f"></i>área quemada</span>
-          <span><i class="mx-dot" style="background:#c81e1e"></i>edificación dentro o a ≤ 100 m · exposición directa</span>
-          <span><i class="mx-dot" style="background:#e6821e"></i>a 100–500 m · riesgo directo</span>
-          <span><i class="mx-dot" style="background:#2f62b0"></i>a 500 m–1 km · medio de vida</span>
+    <div class="seg selector-caso" role="group" aria-label="Incendio">
+      <button data-caso="Livitaca" aria-pressed="true">Livitaca · Chumbivilcas</button>
+      <button data-caso="Huanoquite" aria-pressed="false">Huanoquite · Paruro</button>
+    </div>
+    <div class="rejilla">
+      <div class="panel">
+        <div class="panel-cab">
+          <h3 id="q-titulo">Antes y después del fuego</h3>
+          <div class="casillas">
+            <label><input type="checkbox" id="q-dnbr" checked> Severidad (dNBR)</label>
+            <label><input type="checkbox" id="q-borde" checked> Borde del área quemada</label>
+            <label><input type="checkbox" id="q-focos"> Focos VIIRS</label>
+          </div>
         </div>
-        <div class="mx-legend" id="leyenda-pob" hidden>
-          <span><i class="mx-sw" style="background:#54278f"></i>más personas por km²</span>
-          <span><i class="mx-sw" style="background:#dcd3ea"></i>menos personas por km²</span>
-          <span><i class="mx-dash" style="border-color:#7a2e1f"></i>borde del área quemada</span>
-        </div>
-        <p class="mx-note" id="nota-capa">Un punto = un techo detectado por Google Open Buildings (confianza ≥ 0,75): vivienda, cocina, depósito o corral techado.</p>
+        <div class="mapa" id="mapa-quemado"><div class="cargando">Cargando imágenes…</div></div>
+        <div class="cortina-ctrl"><label for="cortina">Antes</label><input id="cortina" type="range" min="0" max="100" value="50"><span>Después</span></div>
+        <div class="pie" id="q-leyenda"></div>
       </div>
-      <div class="mx-card" id="card-zonas">
-        <h3>Cuántas edificaciones y personas, por distancia</h3>
-        <p class="mx-note">Acumulado: "hasta 500 m" incluye las de "hasta 100 m".</p>
-        <div class="mx-tablebox">
-          <table id="tabla-zonas" data-source="zonas" data-row-key="incendio,zona">
-            <thead><tr><th data-field="zona">Zona</th><th data-field="significa">Significa</th><th class="n" data-field="edificaciones">Edificaciones</th><th class="n" data-field="personas_worldpop">Personas (WorldPop)</th></tr></thead>
-            <tbody></tbody>
-          </table>
+      <div class="columna">
+        <div class="panel"><div class="panel-cuerpo">
+          <div class="rango">
+            <span class="etiqueta">Área quemada medida con Sentinel-2</span>
+            <span class="grande" id="q-rango">—</span>
+            <p id="q-rango-txt"></p>
+          </div>
+          <div id="q-cobertura" style="display:grid;gap:10px"></div>
+        </div></div>
+        <div class="panel">
+          <div class="panel-cab"><h3>El número depende de cada decisión</h3><p>Hectáreas según el umbral de dNBR y la zona que se elijan. En rojo, las dos cifras que usamos.</p></div>
+          <div class="panel-cuerpo" id="q-sens"></div>
         </div>
-        <p class="mx-text"><b>Lectura.</b> En Livitaca las casas están <b>dispersas</b>: estancias familiares junto a sus pastos, y por eso más casas quedan pegadas al fuego. En Huanoquite están <b>agrupadas</b>: el fuego se detuvo a pocos cientos de metros de dos poblados.</p>
-        <p class="mx-text"><b>WorldPop a esta escala.</b> Reparte la población de forma pareja en celdas de 1 km, incluso sobre el pasto quemado donde casi no hay techos. Para un incendio, las edificaciones dicen más.</p>
+      </div>
+    </div>
+    <div class="nota-caja">
+      <b>Por qué damos un rango y no una sola cifra</b>
+      <span>El dNBR mide cuánto verde se perdió. Un bosque parte de mucho verde y cae mucho al quemarse. El pasto seco de la puna en octubre ya tiene poco verde: aunque se queme por completo, el índice baja poco. El umbral habitual de 0,27, pensado para bosques, deja fuera parte de esa quema. Con 0,10 entra, pero con más riesgo de contar pasto que solo se secó. La cifra real está entre las dos.</span>
+    </div>
+  </section>
+
+  <section id="alcance">
+    <div class="cabeza">
+      <span class="etiqueta">A quién alcanza</span>
+      <h2>Pocas casas dentro del fuego, muchas familias alrededor de sus pastos</h2>
+      <p>Contamos edificaciones (Google Open Buildings) y personas estimadas (WorldPop) según su distancia al borde del área quemada.</p>
+    </div>
+    <div class="aviso"><span><b>Las distancias son una decisión nuestra.</b> Elegimos tres franjas según lo que cada una permite leer. Estar cerca no significa haber sufrido daño: el satélite no dice si una casa se quemó.</span></div>
+    <div class="franjas">
+      <div class="franja" style="border-color: var(--e-directa)"><h3>Exposición directa</h3><span class="d">dentro y hasta 100 m</span><p>El fuego pasó por ahí o llegó a la puerta.</p></div>
+      <div class="franja" style="border-color: var(--e-riesgo)"><h3>Riesgo directo</h3><span class="d">de 100 a 500 m</span><p>Viviendas que el fuego pudo alcanzar si seguía avanzando.</p></div>
+      <div class="franja" style="border-color: var(--e-vida)"><h3>Medio de vida</h3><span class="d">de 500 m a 1 km</span><p>Familias cuyos pastos de uso diario se quemaron.</p></div>
+    </div>
+    <div class="seg selector-caso" role="group" aria-label="Incendio">
+      <button data-caso="Livitaca" aria-pressed="true">Livitaca · Chumbivilcas</button>
+      <button data-caso="Huanoquite" aria-pressed="false">Huanoquite · Paruro</button>
+    </div>
+    <div class="rejilla">
+      <div class="panel">
+        <div class="panel-cab">
+          <h3 id="a-titulo">Edificaciones alrededor del área quemada</h3>
+          <div class="seg" role="group" aria-label="Capa">
+            <button data-capa="edificaciones" aria-pressed="true">Edificaciones</button>
+            <button data-capa="personas" aria-pressed="false">Personas (WorldPop)</button>
+          </div>
+        </div>
+        <div class="mapa" id="mapa-alcance"><div class="cargando">Cargando…</div></div>
+        <div class="pie" id="a-pie"></div>
+      </div>
+      <div class="columna">
+        <div class="panel">
+          <div class="panel-cab"><h3>Cuántos, por distancia</h3><p>Cifras acumuladas: "hasta 500 m" incluye lo de "hasta 100 m".</p></div>
+          <div class="tabla-caja"><table id="a-tabla"></table></div>
+        </div>
+        <div class="panel"><div class="panel-cuerpo"><span class="etiqueta">Lectura</span><p class="texto" id="a-lectura"></p></div></div>
       </div>
     </div>
   </section>
 
-  <!-- RELIEVE 3D -->
-  <section class="mx-page" id="relieve" data-page="relieve" hidden>
-    <div class="mx-pills"><span class="lab">Incendio</span><button class="mx-pill" data-inc="Livitaca">Livitaca (Chumbivilcas)</button><button class="mx-pill" data-inc="Huanoquite">Huanoquite (Paruro)</button></div>
-    <div class="mx-card" id="card-3d">
-      <h3>El terreno donde ardió</h3>
-      <p class="mx-note">Copernicus DEM (celdas de 160 m) pintado con el dNBR; exageración vertical ×1,5. Arrastra o usa el control para girar.</p>
-      <div class="mx-3d" id="vista-3d" data-source="relieve"><canvas id="canvas-3d" aria-label="Relieve 3D del área del incendio coloreado por dNBR"></canvas></div>
-      <div class="mx-range"><label for="giro-3d">Girar</label><input id="giro-3d" type="range" min="0" max="360" value="210"><label for="incl-3d">Inclinar</label><input id="incl-3d" type="range" min="20" max="80" value="45"></div>
-      <div class="mx-legend">
-        <span><i class="mx-sw" style="background:#1a9850"></i>vegetación sin cambio (dNBR ≤ 0)</span>
-        <span><i class="mx-sw" style="background:#fee08b"></i>quema leve (≈ 0,2)</span>
-        <span><i class="mx-sw" style="background:#d73027"></i>quema moderada (≥ 0,5)</span>
-      </div>
-      <p class="mx-text">En <b>Livitaca</b> la quema está sobre una meseta de puna, por encima de los 4 000 m. En <b>Huanoquite</b> sube por las laderas de una quebrada y se detiene en las partes más empinadas y en el fondo del valle.</p>
+  <section id="terreno">
+    <div class="cabeza">
+      <span class="etiqueta">El terreno</span>
+      <h2 id="t-titulo">Dónde ardió, en relieve</h2>
+      <p id="t-texto">Modelo de elevación Copernicus (30 m) con la imagen Sentinel-2 del 17 de octubre encima. Arrastra para girar.</p>
     </div>
-  </section>
-
-  <!-- CIFRAS OFICIALES -->
-  <section class="mx-page" id="oficial" data-page="oficial" hidden>
-    <p class="mx-text">Cifras oficiales y mediciones satelitales <b>lado a lado, sin sumarlas</b>: miden cosas distintas con métodos distintos.</p>
-    <div class="mx-grid">
-      <div class="mx-card" id="card-oficial-livitaca">
-        <h3>Livitaca</h3>
-        <div class="mx-pair">
-          <div><span class="l">Área oficial (COEN-INDECI)</span><span class="mx-big"><span data-source="casos" data-field="ha_oficial" data-where="incendio=Livitaca" class="dash-skeleton">—</span> ha</span></div>
-          <div><span class="l">Sentinel-2 (conservadora – amplia)</span><span class="mx-big"><span data-source="casos" data-field="ha_conservadora" data-where="incendio=Livitaca">—</span>–<span data-source="casos" data-field="ha_amplia" data-where="incendio=Livitaca">—</span> ha</span></div>
+    <div class="seg selector-caso" role="group" aria-label="Incendio">
+      <button data-caso="Livitaca" aria-pressed="true">Livitaca · Chumbivilcas</button>
+      <button data-caso="Huanoquite" aria-pressed="false">Huanoquite · Paruro</button>
+    </div>
+    <div class="panel">
+      <div class="vista3d" id="vista3d"><canvas id="c3d" aria-label="Relieve en 3D del área del incendio"></canvas></div>
+      <div class="ctrl3d">
+        <div class="seg" role="group" aria-label="Imagen sobre el relieve">
+          <button data-tex="sat" aria-pressed="false">Satélite</button>
+          <button data-tex="dnbr" aria-pressed="true">Satélite + severidad</button>
         </div>
-        <p class="mx-text">Estado: <span data-source="casos" data-field="estado_oficial" data-where="incendio=Livitaca">—</span>.<br>Personas: <span data-source="casos" data-field="personas_oficial" data-where="incendio=Livitaca">—</span>.</p>
-        <p class="mx-note">Fuente: <span data-source="casos" data-field="fuente_oficial" data-where="incendio=Livitaca">—</span>. El reporte coincide en lugar (CP Illayuyo) y fechas con los focos VIIRS; su cifra es una evaluación rápida en campo.</p>
-      </div>
-      <div class="mx-card" id="card-oficial-huanoquite">
-        <h3>Huanoquite</h3>
-        <div class="mx-pair">
-          <div><span class="l">Área oficial (COEN-INDECI)</span><span class="mx-big">Sin reporte</span></div>
-          <div><span class="l">Sentinel-2 (conservadora – amplia)</span><span class="mx-big"><span data-source="casos" data-field="ha_conservadora" data-where="incendio=Huanoquite">—</span>–<span data-source="casos" data-field="ha_amplia" data-where="incendio=Huanoquite">—</span> ha</span></div>
-        </div>
-        <p class="mx-note">Fuente: <span data-source="casos" data-field="fuente_oficial" data-where="incendio=Huanoquite">—</span>.</p>
-        <p class="mx-text">Un incendio de cientos de hectáreas en pastizal, sin daños a personas, puede no llegar al registro nacional: las cifras oficiales también invisibilizan la quema en la puna.</p>
+        <label for="giro">Girar <input id="giro" type="range" min="0" max="360" value="200"></label>
+        <label for="incl">Inclinar <input id="incl" type="range" min="15" max="75" value="38"></label>
+        <span>Exageración vertical ×1,6</span>
       </div>
     </div>
   </section>
 
-  <!-- MÉTODO -->
-  <section class="mx-page" id="metodo" data-page="metodo" hidden>
-    <div class="mx-card" id="card-decisiones">
-      <h3>Cada decisión y por qué la tomamos</h3>
-      <div class="mx-tablebox" style="max-height:none">
-        <table id="tabla-decisiones" data-source="decisiones" data-row-key="tema">
-          <thead><tr><th data-field="tema">Tema</th><th data-field="decision">Decisión</th><th data-field="por_que">Por qué</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+  <section id="oficial">
+    <div class="cabeza">
+      <span class="etiqueta">Cifras oficiales</span>
+      <h2>El registro oficial se queda corto en la puna</h2>
+      <p>Ponemos lado a lado la cifra oficial y la satelital, sin sumarlas: miden cosas distintas con métodos distintos.</p>
     </div>
-    <div class="mx-card" id="card-limpieza">
-      <h3>Limpieza de focos</h3>
-      <p class="mx-text">De los focos VIIRS del Perú se quitaron <b data-source="nacional" data-field="quitados_confianza_baja" data-row="0">—</b> de confianza baja, <b data-source="nacional" data-field="quitados_fuente_fija" data-row="0">—</b> fuentes fijas (el mismo píxel de 375 m con calor en 5 o más de los 8 días) y <b data-source="nacional" data-field="quitados_volcan" data-row="0">—</b> cerca de volcanes. Quedaron <b data-source="nacional" data-field="focos_limpios" data-row="0">—</b>. Corte de datos: <span data-source="nacional" data-field="corte" data-row="0">—</span>.</p>
+    <div class="dos" id="oficiales"></div>
+  </section>
+
+  <section id="metodo">
+    <div class="cabeza">
+      <span class="etiqueta">Método y decisiones</span>
+      <h2>Cada decisión y por qué la tomamos</h2>
+      <p id="limpieza"></p>
     </div>
-    <div class="mx-card" id="card-limitaciones">
-      <h3>Limitaciones</h3>
-      <ul>
-        <li>Un foco de calor no es un incendio: incluye quemas agrícolas.</li>
-        <li>Las nubes esconden el fuego: en la selva (Río Tambo, Pucallpa) las nubes tapaban entre 33 % y 99 % después del fuego, y quedó fuera del área quemada.</li>
-        <li>WorldPop es un modelo, no un censo; ESA WorldCover es de 2021.</li>
-        <li>Open Buildings cuenta techos (viviendas, cocinas, depósitos), no hogares.</li>
-        <li>Exposición no es daño.</li>
-      </ul>
-      <p class="mx-note">Datos: NASA FIRMS (VIIRS S-NPP, NOAA-20, NOAA-21), Sentinel-2 L2A, ESA WorldCover y Copernicus DEM vía Microsoft Planetary Computer, WorldPop 2020, Google Open Buildings v3, límites INEI (peru-geojson), COEN-INDECI. Código: repositorio grey_diplomado, carpeta tarea_raster.</p>
+    <div class="panel"><div class="tabla-caja"><table class="decisiones" id="decisiones"></table></div></div>
+    <div class="dos">
+      <div class="panel"><div class="panel-cuerpo">
+        <h3>Limitaciones</h3>
+        <ul class="lista">
+          <li>Un foco de calor no es un incendio: también capta quemas agrícolas.</li>
+          <li>Las nubes esconden el fuego. En la selva (Río Tambo, Pucallpa) tapaban entre 33 % y 99 % de la zona después del incendio, y por eso quedó fuera de la medición.</li>
+          <li>WorldPop es un modelo que reparte el censo en celdas de 1 km, no un conteo. A esta escala dice poco.</li>
+          <li>Open Buildings cuenta techos (viviendas, cocinas, depósitos, corrales techados), no hogares.</li>
+          <li>ESA WorldCover es de 2021: la cobertura pudo cambiar.</li>
+          <li>Estar cerca del fuego no es haber sufrido daño.</li>
+        </ul>
+      </div></div>
+      <div class="panel"><div class="panel-cuerpo">
+        <h3>Fuentes</h3>
+        <ul class="lista">
+          <li>Focos de calor: NASA FIRMS, VIIRS S-NPP, NOAA-20 y NOAA-21.</li>
+          <li>Sentinel-2 L2A, ESA WorldCover 2021 y Copernicus DEM, vía Microsoft Planetary Computer.</li>
+          <li>Población: WorldPop 2020 (1 km). Edificaciones: Google Open Buildings v3.</li>
+          <li>Límites: INEI. Cifras oficiales: COEN-INDECI.</li>
+          <li>Código y cuadernos: <a href="https://github.com/grey-d18/grey_diplomado/tree/main/tarea_raster">github.com/grey-d18/grey_diplomado</a>.</li>
+        </ul>
+      </div></div>
     </div>
   </section>
-</div>
+
+  <footer>
+    <span id="pie-corte"></span>
+    <span>Estudio independiente con datos abiertos; no es un producto oficial.</span>
+  </footer>
+</main>
 
 <script>
 (() => {
-  const fmt = d3.format(",.0f");
-  const COB = { Pastizal: "#c9a227", Bosque: "#2e7d4f", Matorral: "#b0702b", Cultivo: "#a35bb5", "Suelo desnudo": "#8c8c8c", Urbano: "#c0392b" };
-  const FRANJA = { "exposición directa": "#c81e1e", "riesgo directo": "#e6821e", "medio de vida": "#2f62b0" };
-  const enc = encodeURIComponent;
-  if (!dash.params().incendio) dash.setParams({ incendio: "Livitaca" });
-  if (!dash.params().capa) dash.setParams({ capa: "edificaciones" });
-
-  // ---------- pestañas
-  let tab = "nacional";
-  const show = (name) => {
-    if (!document.getElementById(name)?.dataset.page) return;
-    tab = name;
-    document.querySelectorAll(".mx-tab").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.tab === name)));
-    document.querySelectorAll("[data-page]").forEach((p) => { p.hidden = p.dataset.page !== name; });
-    dash.setLink(name);
-    draw();
+  const L = d3.formatLocale({ decimal: ",", thousands: " ", grouping: [3], currency: ["S/ ", ""] });
+  const f0 = L.format(",.0f");
+  const MES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "set", "oct", "nov", "dic"];
+  const fecha = (s) => { const [, m, d] = s.slice(0, 10).split("-"); return `${+d} ${MES[+m - 1]}`; };
+  const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+  const el = (tag, attrs = {}, ...hijos) => {
+    const e = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") e.className = v; else if (k === "text") e.textContent = v; else if (k === "style") e.style.cssText = v; else e.setAttribute(k, v);
+    }
+    hijos.forEach((h) => e.append(h));
+    return e;
   };
-  document.querySelectorAll(".mx-tab").forEach((b) => b.addEventListener("click", () => show(b.dataset.tab)));
-  document.querySelectorAll("[data-inc]").forEach((b) => b.addEventListener("click", () => dash.setParams({ incendio: b.dataset.inc })));
-  document.querySelectorAll("[data-capa]").forEach((b) => b.addEventListener("click", () => dash.setParams({ capa: b.dataset.capa })));
-  window.mxShow = show;
+  const muestra = (cls, color, extra = "") => el("i", { class: cls, style: `background:${color};${extra}` });
 
-  // ---------- utilidades
-  const ok = (...ids) => ids.every((id) => dash.data(id).status === "ok");
-  const failed = (...ids) => ids.some((id) => ["error", "connect", "declined", "missing"].includes(dash.data(id).status));
-  const rows = (id) => (dash.data(id).status === "ok" ? dash.data(id).data : []);
-  const placeholder = (el, ids) => {
-    el.replaceChildren();
-    if (failed(...ids)) { const d = document.createElement("div"); d.className = "mx-fail"; d.textContent = "Failed to load"; el.append(d); el.classList.remove("dash-skeleton"); }
-    else el.classList.add("dash-skeleton");
+  // Lectura de cada caso (cifras de los cuadernos 03 y 04)
+  const TXT = {
+    Livitaca: {
+      altitud: "entre 4 085 y 4 341 m",
+      terreno: "La quema se extendió sobre una meseta de puna, por encima de los 4 000 m, sin quebradas que la frenaran.",
+      lectura: "En Livitaca las casas están dispersas: son estancias familiares junto a sus pastos. Por eso más techos quedaron pegados al fuego (13 a 100 m o menos) aunque la zona tiene poca gente.",
+    },
+    Huanoquite: {
+      altitud: "entre 2 929 y 3 929 m",
+      terreno: "La quema subió por las laderas de una quebrada y se detuvo en las partes más empinadas y en el fondo del valle. Al este se ve la cicatriz de un fuego anterior al 5 de octubre.",
+      lectura: "En Huanoquite las casas están agrupadas en poblados. El fuego quedó a pocos cientos de metros de dos de ellos: casi no hay techos a 100 m, pero hay 122 a 500 m.",
+    },
   };
-  // proyección plana: lon escalada por cos(lat) para conservar formas
-  const proyector = (lons, lats, w, h, pad = 8) => {
-    const lat0 = (d3.min(lats) + d3.max(lats)) / 2, k = Math.cos(lat0 * Math.PI / 180);
-    const x0 = d3.min(lons) * k, x1 = d3.max(lons) * k, y0 = d3.min(lats), y1 = d3.max(lats);
+  const COB = { Pastizal: "--pasto", Bosque: "--bosque", Matorral: "--otros", Cultivo: "--otros" };
+  const FRANJA = { "exposición directa": "--e-directa", "riesgo directo": "--e-riesgo", "medio de vida": "--e-vida" };
+  const DNBR = [["#f7cd78", "leve · 0,10–0,27"], ["#ec7a2c", "moderada baja · 0,27–0,44"], ["#c62a1c", "moderada alta · 0,44–0,66"], ["#6e1428", "alta · más de 0,66"]];
+  const AZUL_FOCO = "#2b9be8";
+
+  let D = null, caso = "Livitaca", capa = "edificaciones", orden = "huella_ha", tex = "dnbr";
+
+  // proyección plana lon/lat (longitud escalada por cos(lat)); las imágenes están en esa misma rejilla
+  const proyector = (lim, w, h, pad = 0) => {
+    const [x0l, y0, x1l, y1] = lim, k = Math.cos(((y0 + y1) / 2) * Math.PI / 180);
+    const x0 = x0l * k, x1 = x1l * k;
     const s = Math.min((w - 2 * pad) / (x1 - x0), (h - 2 * pad) / (y1 - y0));
     const ox = (w - s * (x1 - x0)) / 2, oy = (h - s * (y1 - y0)) / 2;
     const p = (lon, lat) => [ox + (lon * k - x0) * s, h - oy - (lat - y0) * s];
-    // trazo SVG de Polygon / MultiPolygon GeoJSON
+    p.km = s / 111.32;
     p.path = (g) => {
       if (!g) return "";
       const polys = g.type === "MultiPolygon" ? g.coordinates : g.type === "Polygon" ? [g.coordinates] : [];
-      return polys.map((anillos) => anillos.map((a) => "M" + a.map(([x, y]) => p(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("");
+      return polys.map((an) => an.map((a) => "M" + a.map(([x, y]) => p(x, y).map((v) => v.toFixed(1)).join(",")).join("L") + "Z").join("")).join("");
     };
-    p.s = s; p.k = k;
+    p.caja = (l) => { const a = p(l[0], l[3]), b = p(l[2], l[1]); return { x: a[0], y: a[1], width: b[0] - a[0], height: b[1] - a[1] }; };
     return p;
   };
-  // las geometrías pueden llegar como texto GeoJSON
-  const geo = (g) => (typeof g === "string" ? JSON.parse(g) : g);
-  const coords = (geom) => {
-    const out = [];
-    if (!geom || !geom.coordinates) return out;
-    const walk = (c) => (!Array.isArray(c) ? null : typeof c[0] === "number" ? out.push(c) : c.forEach(walk));
-    walk(geom.coordinates);
-    return out;
-  };
-  const tooltip = (box) => {
-    let t = box.querySelector(".mx-tip");
-    if (!t) { t = document.createElement("div"); t.className = "mx-tip"; t.hidden = true; box.append(t); }
+  const imagen = (svg, href, rc) => svg.append("image").attr("href", href).attr("x", rc.x).attr("y", rc.y).attr("width", rc.width).attr("height", rc.height).attr("preserveAspectRatio", "none");
+  const tooltip = (caja) => {
+    const t = el("div", { class: "tip" }); t.hidden = true; caja.append(t);
     return {
+      node: t,
       show(ev, titulo, linea) {
-        const r = box.getBoundingClientRect();
-        t.replaceChildren();
-        const a = document.createElement("div"); a.className = "t"; a.textContent = titulo;
-        const b = document.createElement("div"); b.textContent = linea;
-        t.append(a, b); t.hidden = false;
-        const x = Math.min(ev.clientX - r.left + 12, r.width - t.offsetWidth - 4);
-        const y = Math.max(ev.clientY - r.top - t.offsetHeight - 8, 4);
-        t.style.left = x + "px"; t.style.top = y + "px";
+        t.replaceChildren(el("b", { text: titulo }), el("span", { text: linea })); t.hidden = false;
+        const r = caja.getBoundingClientRect();
+        t.style.left = Math.max(4, Math.min(ev.clientX - r.left + 12, r.width - t.offsetWidth - 4)) + "px";
+        t.style.top = Math.max(4, ev.clientY - r.top - t.offsetHeight - 10) + "px";
       },
       hide() { t.hidden = true; },
     };
   };
-  const fillTable = (table, data, cols, keyCols) => {
-    const tb = table.querySelector("tbody");
-    tb.replaceChildren(...data.map((r) => {
-      const tr = document.createElement("tr");
-      tr.dataset.key = keyCols.map((c) => keyCols.length > 1 ? enc(String(r[c])) : String(r[c])).join(",");
-      cols.forEach(([c, num]) => { const td = document.createElement("td"); if (num) td.className = "n"; td.textContent = num ? fmt(r[c]) : r[c]; tr.append(td); });
-      return tr;
+  const escala = (svg, p, w, h) => {
+    const [n, lab] = p.km > 60 ? [1, "1 km"] : p.km > 6 ? [10, "10 km"] : [100, "100 km"];
+    const km = p.km * n;
+    const g = svg.append("g").attr("transform", `translate(${w - km - 16},${h - 14})`).attr("pointer-events", "none");
+    g.append("rect").attr("x", -8).attr("y", -22).attr("width", km + 16).attr("height", 30).attr("rx", 4).attr("fill", "var(--panel)").attr("opacity", 0.88);
+    g.append("rect").attr("width", km).attr("height", 3).attr("fill", "var(--ink)");
+    g.append("text").attr("x", km / 2).attr("y", -7).attr("text-anchor", "middle").attr("fill", "var(--ink-2)").attr("font-size", 11).text(lab);
+  };
+
+  // ---------- encabezado
+  const encabezado = () => {
+    const c = Object.fromEntries(D.casos.map((r) => [r.incendio, r])), lv = c.Livitaca, hq = c.Huanoquite;
+    const tot = [lv.ha_conservadora + hq.ha_conservadora, lv.ha_amplia + hq.ha_amplia];
+    const pct = (inc, cifra) => {
+      const f = D.cobertura.filter((r) => r.incendio === inc && r.cifra === cifra);
+      return (100 * d3.sum(f.filter((r) => r.cobertura === "Pastizal"), (r) => r.ha)) / d3.sum(f, (r) => r.ha);
+    };
+    const pmin = Math.floor(d3.min(["Livitaca", "Huanoquite"].flatMap((i) => [pct(i, "conservadora"), pct(i, "amplia")])));
+    $("#bajada").replaceChildren(
+      "Medimos con imágenes Sentinel-2 dos incendios de mediados de octubre en Livitaca (Chumbivilcas) y Huanoquite (Paruro), territorios de comunidades campesinas. Entre los dos se quemaron ",
+      el("b", { text: `de ${f0(tot[0])} a ${f0(tot[1])} hectáreas` }),
+      ", casi todo pastizal de altura que alimenta al ganado de las familias. Pocas casas quedaron dentro del fuego; muchas más dependen de esos pastos.");
+    const cifra = (cls, v, u, n) => el("div", { class: "cifra " + cls }, el("span", { class: "v" }, v, el("small", { text: u })), el("span", { class: "n", text: n }));
+    $("#cifras").replaceChildren(
+      cifra("fuego", `${f0(lv.ha_conservadora)}–${f0(lv.ha_amplia)}`, "ha", "quemadas en Livitaca el 15 de octubre"),
+      cifra("fuego", `${f0(hq.ha_conservadora)}–${f0(hq.ha_amplia)}`, "ha", "quemadas en Huanoquite del 14 al 17 de octubre"),
+      cifra("pasto", `${pmin}–100`, "%", "del área quemada era pastizal; el bosque fue 6 % en Huanoquite y nada en Livitaca"),
+      cifra("", f0(lv.ha_oficial), "ha", "reporta la cifra oficial para Livitaca; de Huanoquite no hay reporte"));
+    const n = D.nacional[0];
+    $("#meta").replaceChildren(
+      el("span", {}, "Corte de datos: ", el("b", { text: `${fecha(n.corte)} de 2026` })),
+      el("span", {}, "Imágenes: ", el("b", { text: "Sentinel-2, sin nubes sobre los incendios" })),
+      el("span", {}, "Focos de calor: ", el("b", { text: "VIIRS, 3 satélites" })));
+    $("#pie-corte").textContent = `Datos al ${fecha(n.corte)} de 2026. Focos VIIRS del 14 al 21 de octubre.`;
+    $("#pais-texto").textContent = `Agrupamos los ${f0(n.focos_limpios)} focos de calor VIIRS de la semana en incendios: focos a 1 km o menos y con 48 horas o menos entre sí. ${f0(n.incendios_100ha)} incendios superan las 100 ha de huella, en ${f0(n.distritos)} distritos, y ${f0(n.personas_5km)} personas viven a 5 km de alguno.`;
+  };
+
+  // ---------- mapa del país
+  let pais = null;
+  const dibujarPais = () => {
+    const caja = $("#mapa-pais"), w = caja.clientWidth, h = Math.round(Math.min(Math.max(w * 1.2, 440), 760));
+    const p = proyector([-81.4, -18.4, -68.6, -0.03], w, h, 12);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("role", "img").attr("aria-label", "Mapa del Perú con los incendios de la semana");
+    const g = svg.append("g");
+    g.append("g").selectAll("path").data(D.departamentos).join("path").attr("d", (d) => p.path(d.geometria)).attr("fill", "var(--tierra)");
+    imagen(g, "web/peru_relieve.png", p.caja(D.capas.peru.limites)).attr("opacity", 0.9);
+    g.append("g").selectAll("path").data(D.departamentos).join("path").attr("d", (d) => p.path(d.geometria))
+      .attr("fill", "none").attr("stroke", "var(--ink-3)").attr("stroke-width", 0.6).attr("stroke-opacity", 0.7).attr("vector-effect", "non-scaling-stroke");
+    const col = d3.scaleThreshold([500, 2000, 8000], [css("--pasto"), "#e39a3b", css("--fuego"), "#7d1d12"]);
+    const rad = d3.scaleSqrt([0, d3.max(D.incendios, (d) => d.huella_ha)], [0, Math.max(11, w / 30)]);
+    const tip = tooltip(caja);
+    const circ = g.append("g").selectAll("circle").data([...D.incendios].sort((a, b) => b.huella_ha - a.huella_ha)).join("circle")
+      .attr("cx", (d) => p(d.lon, d.lat)[0]).attr("cy", (d) => p(d.lon, d.lat)[1]).attr("r", (d) => rad(d.huella_ha))
+      .attr("fill", (d) => col(d.personas_5km)).attr("fill-opacity", 0.88).attr("stroke", "var(--panel)").attr("stroke-width", 0.9).attr("vector-effect", "non-scaling-stroke")
+      .style("cursor", "pointer")
+      .on("pointermove", (ev, d) => tip.show(ev, `${d.distrito} · ${d.departamento}`, `${f0(d.huella_ha)} ha de huella · ${f0(d.personas_5km)} personas a 5 km · del ${fecha(d.inicio)} al ${fecha(d.ultimo)}`))
+      .on("pointerleave", () => tip.hide());
+    const casos = D.casos.map((c) => ({ nombre: c.incendio, lon: d3.mean(c.focos, (f) => f[0]), lat: d3.mean(c.focos, (f) => f[1]) }));
+    const et = g.append("g").attr("pointer-events", "none").selectAll("g").data(casos).join("g").attr("transform", (d) => `translate(${p(d.lon, d.lat)})`);
+    et.append("circle").attr("r", 12).attr("fill", "none").attr("stroke", "var(--accent)").attr("stroke-width", 2);
+    et.append("text").attr("x", (d) => (d.nombre === "Huanoquite" ? -16 : 16)).attr("y", (d) => (d.nombre === "Huanoquite" ? -8 : 16))
+      .attr("text-anchor", (d) => (d.nombre === "Huanoquite" ? "end" : "start"))
+      .attr("font-family", "var(--f-titulo)").attr("font-weight", 700).attr("font-size", 12).attr("fill", "var(--accent)")
+      .attr("paint-order", "stroke").attr("stroke", "var(--panel)").attr("stroke-width", 3).text((d) => d.nombre);
+    escala(svg, p, w, h);
+    const zoom = d3.zoom().scaleExtent([1, 10]).translateExtent([[0, 0], [w, h]]).filter((ev) => ev.type !== "wheel" && !ev.button)
+      .on("zoom", (ev) => {
+        g.attr("transform", ev.transform);
+        circ.attr("r", (d) => rad(d.huella_ha) / Math.sqrt(ev.transform.k));
+        et.attr("transform", (d) => `translate(${p(d.lon, d.lat)}) scale(${1 / ev.transform.k})`);
+      });
+    svg.call(zoom);
+    caja.replaceChildren(svg.node(), tip.node);
+    const ley = el("div", { class: "flot leyenda" }, el("span", { class: "etiqueta", text: "Personas a 5 km" }));
+    ["menos de 500", "500 a 2 000", "2 000 a 8 000", "más de 8 000"].forEach((t, i) => ley.append(el("span", { class: "f" }, muestra("pt", col.range()[i]), t)));
+    ley.append(el("span", { class: "f" }, muestra("pt", "none", "border:2px solid var(--accent);width:13px;height:13px"), "caso estudiado"));
+    const zb = el("div", { class: "flot zoom" }, el("button", { "aria-label": "Acercar", text: "+" }), el("button", { "aria-label": "Alejar", text: "−" }));
+    zb.children[0].addEventListener("click", () => svg.transition().duration(350).call(zoom.scaleBy, 1.8));
+    zb.children[1].addEventListener("click", () => svg.transition().duration(350).call(zoom.scaleBy, 1 / 1.8));
+    caja.append(ley, zb);
+    pais = { svg, zoom, p, w, h, circ };
+  };
+  const irA = (d) => {
+    if (!pais) return;
+    const [x, y] = pais.p(d.lon, d.lat), k = 5;
+    pais.svg.transition().duration(700).call(pais.zoom.transform, d3.zoomIdentity.translate(pais.w / 2 - k * x, pais.h / 2 - k * y).scale(k));
+    pais.circ.attr("stroke", (c) => (c === d ? "var(--ink)" : "var(--panel)")).attr("stroke-width", (c) => (c === d ? 2.5 : 0.9));
+  };
+  const dibujarRanking = () => {
+    const top = [...D.incendios].sort((a, b) => b[orden] - a[orden]).slice(0, 10), max = top[0][orden];
+    const cusco = new Set(D.casos.map((c) => c.distrito.toLowerCase()));
+    $("#ranking").replaceChildren(...top.map((d, i) => {
+      const l = el("span", { class: "l" }, d.distrito, el("small", { text: d.departamento }));
+      if (cusco.has(d.distrito.toLowerCase())) l.append(el("span", { class: "marca-caso", text: "caso estudiado" }));
+      const b = el("button", { class: "fila-r" }, el("span", { class: "k", text: String(i + 1) }), l,
+        el("span", { class: "v", text: orden === "huella_ha" ? `${f0(d.huella_ha)} ha` : `${f0(d.personas_5km)} pers.` }),
+        el("span", { class: "barra" }, el("i", { style: `width:${(100 * d[orden]) / max}%` })));
+      b.addEventListener("click", () => { $$(".fila-r").forEach((x) => x.removeAttribute("aria-current")); b.setAttribute("aria-current", "true"); irA(d); });
+      return el("li", {}, b);
     }));
+    $$("[data-orden]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.orden === orden)));
   };
 
-  // ---------- marcas sueltas
-  const fillMarks = () => {
-    const inc = dash.params().incendio;
-    document.querySelectorAll(".por-inc").forEach((el) => el.setAttribute("data-where", "incendio=" + enc(inc)));
-    document.querySelectorAll("[data-source][data-field]:not(th)").forEach((el) => {
-      const id = el.dataset.source, d = dash.data(id);
-      if (d.status !== "ok") { if (failed(id)) el.classList.remove("dash-skeleton"); return; }
-      let row;
-      if (el.dataset.row != null) row = d.data[+el.dataset.row];
-      else if (el.dataset.where) {
-        const conds = el.dataset.where.split("&").map((p) => p.split("=").map(decodeURIComponent));
-        row = d.data.find((r) => conds.every(([k, v]) => String(r[k]) === v));
-      }
-      el.classList.remove("dash-skeleton");
-      const v = row ? row[el.dataset.field] : null;
-      el.textContent = v == null ? "—" : typeof v === "number" ? fmt(v) : v;
+  // ---------- qué se quemó
+  const cortina = $("#cortina");
+  let qEstado = null;
+  const dibujarQuemado = () => {
+    const cap = D.capas[caso], lim = cap.limites, c = D.casos.find((r) => r.incendio === caso);
+    const caja = $("#mapa-quemado"), w = caja.clientWidth, h = Math.round((w * cap.alto) / cap.ancho);
+    const p = proyector(lim, w, h), rc = p.caja(lim), base = caso.toLowerCase(), id = "clip-" + base;
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("role", "img").attr("aria-label", `Imagen Sentinel-2 de ${caso} antes y después del incendio`);
+    svg.append("clipPath").attr("id", id).append("rect").attr("height", h).attr("width", (w * cortina.value) / 100);
+    imagen(svg, `web/${base}_despues.jpg`, rc);
+    const capaDnbr = imagen(svg, `web/${base}_dnbr.png`, rc);
+    imagen(svg, `web/${base}_antes.jpg`, rc).attr("clip-path", `url(#${id})`);
+    const amplia = D.area.find((r) => r.incendio === caso && r.cifra === "amplia");
+    const borde = svg.append("path").attr("d", p.path(amplia.geometria)).attr("fill", "none").attr("stroke", "#fff").attr("stroke-width", 1.3).attr("stroke-dasharray", "5 3");
+    const focos = svg.append("g").selectAll("circle").data(D.focos.filter((f) => f.incendio === caso)).join("circle")
+      .attr("cx", (f) => p(f.lon, f.lat)[0]).attr("cy", (f) => p(f.lon, f.lat)[1]).attr("r", 3.2).attr("fill", AZUL_FOCO).attr("stroke", "#fff").attr("stroke-width", 0.8);
+    const linea = svg.append("g").attr("pointer-events", "none");
+    linea.append("line").attr("y1", 0).attr("y2", h).attr("stroke", "#fff").attr("stroke-width", 2);
+    linea.append("circle").attr("cy", h / 2).attr("r", 15).attr("fill", "#fff").attr("stroke", "rgb(0 0 0 / .25)");
+    linea.append("path").attr("d", `M-4,${h / 2 - 5} l-5,5 l5,5 M4,${h / 2 - 5} l5,5 l-5,5`).attr("fill", "none").attr("stroke", "#1b2420").attr("stroke-width", 1.8);
+    escala(svg, p, w, h);
+    const mover = (pct) => { const x = (w * pct) / 100; svg.select(`#${id} rect`).attr("width", x); linea.attr("transform", `translate(${x},0)`); };
+    mover(+cortina.value);
+    const arrastre = (ev) => { const r = caja.getBoundingClientRect(); const pct = Math.max(0, Math.min(100, (100 * (ev.clientX - r.left)) / r.width)); cortina.value = pct; mover(pct); };
+    svg.style("cursor", "ew-resize")
+      .on("pointerdown", (ev) => { svg.node().setPointerCapture(ev.pointerId); arrastre(ev); svg.on("pointermove", arrastre); })
+      .on("pointerup pointercancel", () => svg.on("pointermove", null));
+    caja.replaceChildren(svg.node(),
+      el("span", { class: "chip-img izq", text: `Antes · ${fecha(cap.fecha_antes)}` }),
+      el("span", { class: "chip-img der", text: `Después · ${fecha(cap.fecha_despues)}` }));
+    qEstado = { mover, capaDnbr, borde, focos };
+    aplicarCasillas();
+    $("#q-titulo").textContent = `${caso}: antes y después del fuego`;
+    const ley = $("#q-leyenda");
+    ley.replaceChildren(el("span", { class: "ley-item", style: "font-weight:600;color:var(--ink-2)", text: "Severidad (dNBR):" }));
+    DNBR.forEach(([c2, t]) => ley.append(el("span", { class: "ley-item" }, muestra("cu", c2), t)));
+    ley.append(el("span", { class: "ley-item" }, muestra("pt", AZUL_FOCO), "foco VIIRS"));
+    ley.append(el("span", { class: "ley-item" }, el("i", { class: "ln" }), "borde del área quemada"));
+    if (c.nubes_antes_pct > 1) ley.append(el("div", { text: `La imagen "antes" que usa el dNBR combina el 10, 7 y 5 de octubre para cubrir las nubes del día 10; aquí se muestra la del ${fecha(cap.fecha_antes)}.` }));
+
+    $("#q-rango").replaceChildren(`${f0(c.ha_conservadora)}–${f0(c.ha_amplia)} `, el("small", { text: "ha" }));
+    $("#q-rango-txt").textContent = `La cifra baja usa el umbral 0,27; la alta, 0,10. Los focos VIIRS solos marcaban ${f0(c.huella_viirs_ha)} ha.`;
+    const cob = D.cobertura.filter((r) => r.incendio === caso), caja2 = $("#q-cobertura");
+    caja2.replaceChildren(el("span", { class: "etiqueta", text: "Qué había antes del fuego (ESA WorldCover)" }));
+    ["conservadora", "amplia"].forEach((cifra) => {
+      const filas = cob.filter((r) => r.cifra === cifra).sort((a, b) => b.ha - a.ha), tot = d3.sum(filas, (r) => r.ha);
+      const barra = el("div", { style: "display:flex;height:22px;border-radius:4px;overflow:hidden;background:var(--panel-2);gap:1px" });
+      filas.forEach((r) => barra.append(el("div", { title: `${r.cobertura}: ${f0(r.ha)} ha`, style: `width:${(100 * r.ha) / tot}%;background:var(${COB[r.cobertura]})` })));
+      const txt = filas.map((r) => `${r.cobertura.toLowerCase()} ${f0(r.ha)} ha (${L.format(".0f")((100 * r.ha) / tot)} %)`).join(" · ");
+      caja2.append(el("div", { style: "display:grid;gap:5px" },
+        el("span", { style: "font-size:.88rem;color:var(--ink-3)", text: cifra === "conservadora" ? "Cifra baja (dNBR ≥ 0,27)" : "Cifra alta (dNBR ≥ 0,10)" }), barra,
+        el("span", { style: "font-size:.92rem;color:var(--ink-2)", text: txt })));
     });
-    document.querySelectorAll("[data-inc]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.inc === inc)));
-    document.querySelectorAll("[data-capa]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.capa === dash.params().capa)));
+    const leyc = el("div", { style: "display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.85rem;color:var(--ink-2)" });
+    [["Pastizal", "--pasto"], ["Bosque", "--bosque"], ["Matorral y cultivo", "--otros"]].forEach(([t, v]) => leyc.append(el("span", { class: "ley-item" }, muestra("cu", `var(${v})`), t)));
+    caja2.append(leyc);
+    dibujarSens();
+  };
+  const aplicarCasillas = () => {
+    if (!qEstado) return;
+    qEstado.capaDnbr.attr("display", $("#q-dnbr").checked ? null : "none");
+    qEstado.borde.attr("display", $("#q-borde").checked ? null : "none");
+    qEstado.focos.attr("display", $("#q-focos").checked ? null : "none");
+  };
+  const dibujarSens = () => {
+    const caja = $("#q-sens"), w = Math.max(caja.clientWidth - 36, 260);
+    const filas = [...D.sens.filter((r) => r.incendio === caso)].sort((a, b) => b.ha - a.ha);
+    const nombre = (v) => v.replace(" (cifra conservadora)", "").replace(" (cifra amplia)", "").replace("sembrado con focos", "manchas que tocan focos");
+    const fila = 36, h = filas.length * fila + 22;
+    const x = d3.scaleLinear([0, d3.max(D.sens, (r) => r.ha) * 1.08], [2, w - 34]);
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("width", "100%").attr("role", "img").attr("aria-label", "Hectáreas según cada decisión de método");
+    x.ticks(4).forEach((t) => {
+      svg.append("line").attr("x1", x(t)).attr("x2", x(t)).attr("y1", 0).attr("y2", h - 18).attr("stroke", "var(--line)");
+      svg.append("text").attr("x", x(t)).attr("y", h - 4).attr("text-anchor", t === 0 ? "start" : "middle").attr("font-size", 11).attr("fill", "var(--ink-3)").text(t === 0 ? "0 ha" : f0(t));
+    });
+    filas.forEach((r, i) => {
+      const y = i * fila + 12, clave = /cifra/.test(r.variante), viirs = /VIIRS/.test(r.variante);
+      const color = clave ? "var(--fuego)" : viirs ? AZUL_FOCO : "var(--ink-3)";
+      svg.append("text").attr("x", 2).attr("y", y).attr("font-size", 12.5).attr("fill", clave ? "var(--ink)" : "var(--ink-2)").attr("font-weight", clave ? 700 : 400).text(nombre(r.variante));
+      svg.append("line").attr("x1", x(0)).attr("x2", x(r.ha)).attr("y1", y + 10).attr("y2", y + 10).attr("stroke", color).attr("stroke-width", 2).attr("stroke-opacity", clave ? 1 : 0.45);
+      svg.append("circle").attr("cx", x(r.ha)).attr("cy", y + 10).attr("r", clave ? 5.5 : 4).attr("fill", color);
+      svg.append("text").attr("x", x(r.ha) + 9).attr("y", y + 14).attr("font-size", 11.5).attr("font-family", "var(--f-dato)").attr("fill", "var(--ink-2)").text(f0(r.ha));
+    });
+    caja.replaceChildren(svg.node());
   };
 
-  // ---------- panorama nacional
-  const drawNacional = () => {
-    const box = document.getElementById("mapa-nacional");
-    if (!ok("incendios", "departamentos")) return placeholder(box, ["incendios", "departamentos"]);
-    box.classList.remove("dash-skeleton");
-    const inc = rows("incendios"), dep = rows("departamentos");
-    const w = box.clientWidth, h = Math.max(420, Math.min(620, w * 1.25));
-    const pts = dep.flatMap((d) => coords(geo(d.geometria)));
-    const p = proyector(pts.map((c) => c[0]), pts.map((c) => c[1]), w, h);
-    const tope = d3.quantile(inc.map((r) => r.personas_5km).sort(d3.ascending), 0.95);
-    const color = d3.scaleLinear([0, tope / 2, tope], ["#f2c14e", "#e07b39", "#c2271d"]).clamp(true);
-    const radio = d3.scaleSqrt([0, d3.max(inc, (r) => r.huella_ha)], [0, Math.max(10, w / 32)]);
-    const svg = d3.create("svg").attr("width", "100%").attr("viewBox", `0 0 ${w} ${h}`);
-    svg.append("g").selectAll("path").data(dep).join("path").attr("d", (d) => p.path(geo(d.geometria)))
-      .attr("fill", "var(--color-bg)").attr("stroke", "var(--cds-chart-axis)").attr("stroke-width", 0.7);
-    const tip = tooltip(box);
-    svg.append("g").selectAll("circle").data([...inc].sort((a, b) => b.huella_ha - a.huella_ha)).join("circle")
-      .attr("cx", (d) => p(d.lon, d.lat)[0]).attr("cy", (d) => p(d.lon, d.lat)[1]).attr("r", (d) => radio(d.huella_ha))
-      .attr("fill", (d) => color(d.personas_5km)).attr("fill-opacity", 0.85).attr("stroke", "var(--color-bg)").attr("stroke-width", 0.8)
-      .on("mousemove", (ev, d) => tip.show(ev, `${d.distrito} (${d.departamento})`, `${fmt(d.huella_ha)} ha de huella · ${fmt(d.personas_5km)} personas a 5 km`))
-      .on("mouseleave", () => tip.hide());
-    box.querySelector("svg")?.remove();
-    box.prepend(svg.node());
-    fillTable(document.getElementById("tabla-huella"), [...inc].sort((a, b) => b.huella_ha - a.huella_ha).slice(0, 8),
-      [["distrito"], ["departamento"], ["huella_ha", 1], ["personas_5km", 1]], ["id"]);
-    fillTable(document.getElementById("tabla-personas"), [...inc].sort((a, b) => b.personas_5km - a.personas_5km).slice(0, 8),
-      [["distrito"], ["departamento"], ["huella_ha", 1], ["personas_5km", 1]], ["id"]);
-  };
-
-  // ---------- mapa de un incendio
-  const mapaIncendio = (box, capa) => {
-    const inc = dash.params().incendio;
-    const areas = rows("area_quemada").filter((r) => r.incendio === inc);
-    const amplia = areas.find((r) => r.cifra === "amplia"), cons = areas.find((r) => r.cifra === "conservadora");
-    const edif = rows("edificaciones").filter((r) => r.incendio === inc);
-    const cel = rows("worldpop").filter((r) => r.incendio === inc);
-    const foc = rows("focos_casos").filter((r) => r.incendio === inc);
-    if (!amplia || !cons) return;
-    const ext = coords(geo(amplia.geometria)).concat(capa === "quemado" ? foc.map((f) => [f.lon, f.lat]) : edif.map((e) => [e.lon, e.lat]));
-    const w = box.clientWidth, h = Math.max(400, Math.min(560, w * 0.85));
-    const p = proyector(ext.map((c) => c[0]), ext.map((c) => c[1]), w, h, 14);
-    const svg = d3.create("svg").attr("width", "100%").attr("viewBox", `0 0 ${w} ${h}`);
-    const tip = tooltip(box);
+  // ---------- a quién alcanza
+  const dibujarAlcance = () => {
+    const cap = D.capas[caso], lim = cap.limites;
+    const caja = $("#mapa-alcance"), w = caja.clientWidth, h = Math.round((w * cap.alto) / cap.ancho);
+    const p = proyector(lim, w, h), rc = p.caja(lim), base = caso.toLowerCase(), fid = "gris-" + base;
+    const svg = d3.create("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("role", "img").attr("aria-label", `Mapa de ${capa} alrededor del área quemada en ${caso}`);
+    svg.append("filter").attr("id", fid).append("feColorMatrix").attr("type", "saturate").attr("values", 0.15);
+    imagen(svg, `web/${base}_despues.jpg`, rc).attr("filter", `url(#${fid})`).attr("opacity", 0.85);
+    const amplia = D.area.find((r) => r.incendio === caso && r.cifra === "amplia");
+    const tip = tooltip(caja);
     if (capa === "personas") {
-      const tope = Math.max(d3.max(cel, (c) => c.personas_km2), 1);
-      const col = d3.scaleLinear([0, tope], ["#dcd3ea", "#54278f"]);
-      svg.append("g").selectAll("rect").data(cel.filter((c) => c.personas > 0)).join("rect")
+      const cel = D.worldpop.filter((r) => r.incendio === caso && r.personas > 0);
+      const col = d3.scaleSequentialSqrt([0, d3.max(cel, (c) => c.personas_km2)], d3.interpolateRgb("rgba(107,76,154,0.12)", "rgba(84,39,143,0.85)"));
+      svg.append("g").selectAll("rect").data(cel).join("rect")
         .attr("x", (c) => Math.min(p(c.lon0, c.lat0)[0], p(c.lon1, c.lat1)[0])).attr("y", (c) => Math.min(p(c.lon0, c.lat0)[1], p(c.lon1, c.lat1)[1]))
         .attr("width", (c) => Math.abs(p(c.lon1, c.lat1)[0] - p(c.lon0, c.lat0)[0])).attr("height", (c) => Math.abs(p(c.lon1, c.lat1)[1] - p(c.lon0, c.lat0)[1]))
-        .attr("fill", (c) => col(c.personas_km2)).attr("stroke", "var(--color-bg)").attr("stroke-width", 0.6)
-        .on("mousemove", (ev, c) => tip.show(ev, "Celda WorldPop de ~1 km", `~${fmt(c.personas)} personas estimadas · ${fmt(c.personas_km2)} por km²`))
-        .on("mouseleave", () => tip.hide());
-      svg.append("path").attr("d", p.path(geo(amplia.geometria))).attr("fill", "none").attr("stroke", "#7a2e1f").attr("stroke-width", 1.4).attr("stroke-dasharray", "4 3");
+        .attr("fill", (c) => col(c.personas_km2)).attr("stroke", "rgba(255,255,255,0.5)").attr("stroke-width", 0.5)
+        .on("pointermove", (ev, c) => tip.show(ev, "Celda WorldPop (~1 km)", `~${f0(c.personas)} personas estimadas · ${f0(c.personas_km2)} por km²`)).on("pointerleave", () => tip.hide());
+      svg.append("path").attr("d", p.path(amplia.geometria)).attr("fill", "none").attr("stroke", "#fff").attr("stroke-width", 1.4).attr("stroke-dasharray", "5 3").attr("pointer-events", "none");
     } else {
-      svg.append("path").attr("d", p.path(geo(amplia.geometria))).attr("fill", "#d9a57f").attr("stroke", "none");
-      if (capa === "quemado") svg.append("path").attr("d", p.path(geo(cons.geometria))).attr("fill", "#7a2e1f").attr("stroke", "none");
-      const puntos = capa === "quemado" ? foc : edif;
-      svg.append("g").selectAll("circle").data(puntos).join("circle")
-        .attr("cx", (d) => p(d.lon, d.lat)[0]).attr("cy", (d) => p(d.lon, d.lat)[1])
-        .attr("r", capa === "quemado" ? 3 : 3.2)
-        .attr("fill", (d) => (capa === "quemado" ? "#2f62b0" : FRANJA[d.franja])).attr("stroke", "var(--color-bg)").attr("stroke-width", 0.6)
-        .on("mousemove", (ev, d) => capa === "quemado" ? tip.show(ev, "Foco de calor VIIRS", `${d.hora_utc} UTC`)
-          : tip.show(ev, "Edificación (Open Buildings)", `a ${fmt(d.distancia_m)} m del área quemada · ${d.franja}`))
-        .on("mouseleave", () => tip.hide());
+      svg.append("path").attr("d", p.path(amplia.geometria)).attr("fill", "rgba(200,70,27,0.55)").attr("stroke", "#fff").attr("stroke-width", 1).attr("stroke-opacity", 0.8);
+      const ed = D.edif.filter((r) => r.incendio === caso).sort((a, b) => b.distancia_m - a.distancia_m);
+      svg.append("g").selectAll("circle").data(ed).join("circle")
+        .attr("cx", (d) => p(d.lon, d.lat)[0]).attr("cy", (d) => p(d.lon, d.lat)[1]).attr("r", 4)
+        .attr("fill", (d) => css(FRANJA[d.franja])).attr("stroke", "#fff").attr("stroke-width", 1)
+        .on("pointermove", (ev, d) => tip.show(ev, "Edificación (Open Buildings)", `${d.distancia_m <= 0 ? "dentro del área quemada" : `a ${f0(d.distancia_m)} m del área quemada`} · ${d.franja}`)).on("pointerleave", () => tip.hide());
     }
-    const km = 1000 / (111320 * p.k) * p.s * p.k;  // píxeles por km
-    const barra = svg.append("g").attr("transform", `translate(${w - 14 - km},${h - 16})`);
-    barra.append("rect").attr("width", km).attr("height", 3).attr("fill", "var(--color-fg)");
-    barra.append("text").attr("x", km / 2).attr("y", -5).attr("text-anchor", "middle").attr("fill", "var(--color-fg-muted)").attr("font-size", 11).text("1 km");
-    box.querySelector("svg")?.remove();
-    box.prepend(svg.node());
+    escala(svg, p, w, h);
+    caja.replaceChildren(svg.node(), tip.node);
+    const ley = el("div", { class: "flot leyenda" });
+    if (capa === "personas") {
+      ley.append(el("span", { class: "etiqueta", text: "Personas por km²" }),
+        el("span", { class: "f" }, muestra("cu", "linear-gradient(90deg, rgba(107,76,154,0.15), rgba(84,39,143,0.9))", "width:60px"), "menos → más"),
+        el("span", { class: "f" }, el("i", { class: "ln" }), "borde del área quemada"));
+    } else {
+      ley.append(el("span", { class: "etiqueta", text: "Edificaciones" }));
+      [["--e-directa", "dentro o hasta 100 m"], ["--e-riesgo", "de 100 a 500 m"], ["--e-vida", "de 500 m a 1 km"]].forEach(([v, t]) =>
+        ley.append(el("span", { class: "f" }, muestra("pt", `var(${v})`, "border:1px solid #fff"), t)));
+      ley.append(el("span", { class: "f" }, muestra("cu", "rgba(200,70,27,0.55)"), "área quemada (cifra alta)"));
+    }
+    caja.append(ley);
+    $("#a-titulo").textContent = capa === "personas" ? `${caso}: personas estimadas alrededor del área quemada` : `${caso}: edificaciones alrededor del área quemada`;
+    $("#a-pie").textContent = capa === "personas"
+      ? "Cada cuadro es una celda de WorldPop: personas estimadas por un modelo que reparte el censo en celdas de 1 km, incluso sobre el pasto donde casi no hay techos."
+      : "Cada punto es un techo detectado por Google Open Buildings con confianza de 0,75 o más: vivienda, cocina, depósito o corral techado.";
+    $$("[data-capa]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.capa === capa)));
+
+    const zonas = D.zonas.filter((r) => r.incendio === caso);
+    const mE = d3.max(D.zonas, (r) => r.edificaciones), mP = d3.max(D.zonas, (r) => r.personas_worldpop);
+    const celda = (v, m, color) => el("div", { class: "celda-barra" }, el("span", { text: f0(v) }), el("i", { style: `width:${(100 * v) / m}%;background:${color}` }));
+    $("#a-tabla").replaceChildren(
+      el("thead", {}, el("tr", {}, el("th", { text: "Zona" }), el("th", { text: "Edificaciones" }), el("th", { text: "Personas" }))),
+      el("tbody", {}, ...zonas.map((r) => el("tr", {},
+        el("td", {}, el("div", { style: "font-weight:600;color:var(--ink)", text: r.zona.replace("dentro del área quemada", "dentro") }),
+          el("div", { style: `font-size:.82rem;color:var(${FRANJA[r.significa]})`, text: r.significa })),
+        el("td", { class: "n" }, celda(r.edificaciones, mE, "var(--ink-2)")),
+        el("td", { class: "n" }, celda(r.personas_worldpop, mP, "var(--pob)"))))));
+    $("#a-lectura").textContent = `${TXT[caso].lectura} WorldPop, en cambio, reparte la población de forma pareja en celdas de 1 km: a esta escala las edificaciones dicen más.`;
   };
 
-  const drawQuemado = () => {
-    const box = document.getElementById("mapa-quemado");
-    if (!ok("area_quemada", "focos_casos")) placeholder(box, ["area_quemada", "focos_casos"]);
-    else { box.classList.remove("dash-skeleton"); mapaIncendio(box, "quemado"); }
-    const cb = document.getElementById("chart-cobertura");
-    if (!ok("cobertura")) placeholder(cb, ["cobertura"]);
-    else { cb.classList.remove("dash-skeleton"); drawCobertura(cb); }
-    const ts = document.getElementById("tabla-sens");
-    if (ok("sensibilidad")) fillTable(ts, rows("sensibilidad").filter((r) => r.incendio === dash.params().incendio), [["variante"], ["ha", 1]], ["incendio", "variante"]);
+  // ---------- relieve 3D: una cara por celda del modelo de elevación, con el color de la imagen y sombreada por su pendiente
+  let giro = 200, incl = 38;
+  const malla = {};
+  const cargarImg = (src) => new Promise((ok, mal) => { const i = new Image(); i.onload = () => ok(i); i.onerror = mal; i.src = src; });
+  const prepararMalla = async (nombre) => {
+    if (malla[nombre]) return malla[nombre];
+    const base = nombre.toLowerCase();
+    const [m, sat, dn] = await Promise.all([fetch(`web/${base}_malla.json`).then((r) => r.json()), cargarImg(`web/${base}_despues.jpg`), cargarImg(`web/${base}_dnbr.png`)]);
+    const cv = document.createElement("canvas"); cv.width = m.cols; cv.height = m.filas;
+    const cx = cv.getContext("2d", { willReadFrequently: true });
+    cx.drawImage(sat, 0, 0, m.cols, m.filas);
+    m.colSat = cx.getImageData(0, 0, m.cols, m.filas).data.slice();
+    cx.drawImage(dn, 0, 0, m.cols, m.filas);
+    m.colDnbr = cx.getImageData(0, 0, m.cols, m.filas).data.slice();
+    const lim = D.capas[nombre].limites, k = Math.cos(((lim[1] + lim[3]) / 2) * Math.PI / 180);
+    m.anchoM = (lim[2] - lim[0]) * k * 111320; m.altoM = (lim[3] - lim[1]) * 111320;
+    m.zmin = d3.min(m.z); m.zmed = d3.mean(m.z);
+    malla[nombre] = m;
+    return m;
   };
-
-  const drawCobertura = (box) => {
-    const inc = dash.params().incendio;
-    const data = rows("cobertura").filter((r) => r.incendio === inc);
-    const cats = [...new Set(data.filter((r) => r.cifra === "amplia").sort((a, b) => b.ha - a.ha).map((r) => r.cobertura))];
-    const w = box.clientWidth, fila = 46, h = cats.length * fila + 24;
-    const svg = d3.create("svg").attr("width", "100%").attr("viewBox", `0 0 ${w} ${h}`);
-    const medir = svg.append("text").attr("font-size", 12).text("Suelo desnudo");
-    box.replaceChildren(svg.node());
-    const izq = Math.ceil(medir.node().getComputedTextLength()) + 12; medir.remove();
-    const der = 64;
-    const x = d3.scaleLinear([0, d3.max(data, (r) => r.ha) || 1], [izq, w - der]);
-    cats.forEach((c, i) => {
-      const y0 = i * fila + 6;
-      svg.append("text").attr("x", 0).attr("y", y0 + 17).attr("font-size", 12).attr("fill", "var(--color-fg)").text(c);
-      ["conservadora", "amplia"].forEach((cifra, j) => {
-        const r = data.find((d) => d.cobertura === c && d.cifra === cifra);
-        const v = r ? r.ha : 0, y = y0 + j * 17;
-        svg.append("rect").attr("x", izq).attr("y", y).attr("height", 14).attr("rx", 4)
-          .attr("width", Math.max(x(v) - izq, v > 0 ? 2 : 0)).attr("fill", COB[c] || "#888").attr("fill-opacity", cifra === "conservadora" ? 1 : 0.45);
-        svg.append("text").attr("x", x(v) + 6).attr("y", y + 11).attr("font-size", 11).attr("fill", "var(--color-fg-muted)")
-          .text(`${fmt(v)} ha ${cifra === "conservadora" ? "(≥ 0,27)" : "(≥ 0,10)"}`);
-      });
-    });
-  };
-
-  const drawAlcance = () => {
-    const capa = dash.params().capa === "personas" ? "personas" : "edificaciones";
-    document.getElementById("leyenda-edif").hidden = capa !== "edificaciones";
-    document.getElementById("leyenda-pob").hidden = capa !== "personas";
-    document.getElementById("titulo-alcance").textContent = capa === "personas"
-      ? "Personas estimadas alrededor del área quemada (WorldPop)" : "Edificaciones alrededor del área quemada (Open Buildings)";
-    document.getElementById("nota-capa").textContent = capa === "personas"
-      ? "Cada cuadrado es una celda de ~1 km de WorldPop: personas estimadas por un modelo que reparte el censo, no contadas."
-      : "Un punto = un techo detectado por Google Open Buildings (confianza ≥ 0,75): vivienda, cocina, depósito o corral techado.";
-    const box = document.getElementById("mapa-alcance");
-    if (!ok("area_quemada", "edificaciones", "worldpop")) placeholder(box, ["area_quemada", "edificaciones", "worldpop"]);
-    else { box.classList.remove("dash-skeleton"); mapaIncendio(box, capa); }
-    if (ok("zonas")) fillTable(document.getElementById("tabla-zonas"), rows("zonas").filter((r) => r.incendio === dash.params().incendio),
-      [["zona"], ["significa"], ["edificaciones", 1], ["personas_worldpop", 1]], ["incendio", "zona"]);
-  };
-
-  // ---------- relieve 3D en canvas
-  let giro = 210, incl = 45;
-  const rampa = d3.scaleLinear([-0.05, 0.2, 0.5], ["#1a9850", "#fee08b", "#d73027"]).clamp(true);
-  const drawRelieve = () => {
-    const box = document.getElementById("vista-3d"), cv = document.getElementById("canvas-3d");
-    if (!ok("relieve")) { if (failed("relieve")) placeholder(box, ["relieve"]); else box.classList.add("dash-skeleton"); return; }
-    box.classList.remove("dash-skeleton");
-    if (!box.contains(cv)) box.replaceChildren(cv);
-    const inc = dash.params().incendio, data = rows("relieve").filter((r) => r.incendio === inc);
-    const nf = d3.max(data, (r) => r.fila) + 1, nc = d3.max(data, (r) => r.col) + 1;
-    const g = Array.from({ length: nf }, () => new Array(nc));
-    data.forEach((r) => { g[r.fila][r.col] = r; });
-    const w = box.clientWidth, h = Math.round(Math.max(360, Math.min(560, w * 0.62)));
-    const dpr = window.devicePixelRatio || 1;
-    cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + "px";
+  const dibujar3D = async () => {
+    const nombre = caso;
+    let m;
+    try { m = await prepararMalla(nombre); } catch (e) { console.error(e); return; }
+    if (nombre !== caso) return;
+    const caja = $("#vista3d"), cv = $("#c3d"), w = caja.clientWidth, h = Math.round(Math.max(340, Math.min(600, w * 0.56)));
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); cv.style.height = h + "px"; }
     const ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
-    const xs = data.map((r) => r.x_km), ys = data.map((r) => r.y_km), zs = data.filter((r) => r.altitud_m != null).map((r) => r.altitud_m);
-    const cx = (d3.min(xs) + d3.max(xs)) / 2, cy = (d3.min(ys) + d3.max(ys)) / 2, zmin = d3.min(zs);
-    const a = giro * Math.PI / 180, e = incl * Math.PI / 180, ca = Math.cos(a), sa = Math.sin(a);
-    const span = Math.hypot(d3.max(xs) - d3.min(xs), d3.max(ys) - d3.min(ys));
-    const s = Math.min(w, h * 1.6) / span * 0.95, zk = 1.5 / 1000;
-    const proj = (r) => {
-      const x = r.x_km - cx, y = r.y_km - cy, z = (r.altitud_m - zmin) * zk;
+    const { filas: nf, cols: nc, z } = m, col = tex === "dnbr" ? m.colDnbr : m.colSat;
+    const dxm = m.anchoM / (nc - 1), dym = m.altoM / (nf - 1), EX = 1.6;
+    const a = (giro * Math.PI) / 180, e = (incl * Math.PI) / 180, ca = Math.cos(a), sa = Math.sin(a), se = Math.sin(e), ce = Math.cos(e);
+    const s = Math.min(w * 0.9, h * 1.45) / Math.hypot(m.anchoM, m.altoM);
+    const zc = (m.zmed - m.zmin) * EX;
+    const N = nf * nc, X = new Float32Array(N), Y = new Float32Array(N), P = new Float32Array(N);
+    for (let i = 0; i < nf; i++) for (let j = 0; j < nc; j++) {
+      const q = i * nc + j, x = j * dxm - m.anchoM / 2, y = m.altoM / 2 - i * dym, zz = (z[q] - m.zmin) * EX - zc;
       const xr = x * ca - y * sa, yr = x * sa + y * ca;
-      return [w / 2 + xr * s, h * 0.58 - (yr * Math.sin(e) + z * Math.cos(e)) * s, yr];
-    };
-    const quads = [];
-    for (let i = 0; i < nf - 1; i++) for (let j = 0; j < nc - 1; j++) {
-      const c4 = [g[i][j], g[i][j + 1], g[i + 1][j + 1], g[i + 1][j]];
-      if (c4.some((c) => !c || c.altitud_m == null)) continue;
-      const P = c4.map(proj);
-      const dx = (c4[1].altitud_m - c4[0].altitud_m), dy = (c4[3].altitud_m - c4[0].altitud_m);
-      const luz = Math.max(0.35, Math.min(1, 0.75 - (dx * 0.6 + dy * 0.4) / 160));
-      quads.push({ P, d: d3.mean(P, (q) => q[2]), col: d3.color(rampa(d3.mean(c4, (c) => c.dnbr))), luz });
+      X[q] = w / 2 + xr * s; Y[q] = h / 2 - (yr * se + zz * ce) * s; P[q] = yr;
     }
-    quads.sort((q1, q2) => q2.d - q1.d);
-    quads.forEach((q) => {
-      const c = q.col.copy(); c.r *= q.luz; c.g *= q.luz; c.b *= q.luz;
-      ctx.fillStyle = c.formatRgb(); ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 0.6;
-      ctx.beginPath(); ctx.moveTo(q.P[0][0], q.P[0][1]); for (let k = 1; k < 4; k++) ctx.lineTo(q.P[k][0], q.P[k][1]); ctx.closePath(); ctx.fill(); ctx.stroke();
-    });
+    const caras = [];
+    for (let i = 0; i < nf - 1; i++) for (let j = 0; j < nc - 1; j++) {
+      const q = i * nc + j;
+      const gx = ((z[q + 1] - z[q] + z[q + nc + 1] - z[q + nc]) / (2 * dxm)) * EX;
+      const gy = ((z[q] - z[q + nc] + z[q + 1] - z[q + nc + 1]) / (2 * dym)) * EX;
+      const luz = 0.55 + 0.6 * Math.max(0, (0.5 * gx - 0.5 * gy + 0.71) / Math.hypot(gx, gy, 1));   // luz desde el noroeste, suave
+      caras.push([q, P[q] + P[q + nc + 1], luz]);
+    }
+    caras.sort((u, v) => v[1] - u[1]);
+    ctx.lineWidth = 0.6;
+    for (const [q, , luz] of caras) {
+      const c4 = q * 4;
+      ctx.fillStyle = `rgb(${Math.min(255, col[c4] * luz) | 0},${Math.min(255, col[c4 + 1] * luz) | 0},${Math.min(255, col[c4 + 2] * luz) | 0})`;
+      ctx.strokeStyle = ctx.fillStyle;
+      ctx.beginPath(); ctx.moveTo(X[q], Y[q]); ctx.lineTo(X[q + 1], Y[q + 1]); ctx.lineTo(X[q + nc + 1], Y[q + nc + 1]); ctx.lineTo(X[q + nc], Y[q + nc]); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    }
+    // rosa del norte
+    const nx = -sa, ny = -ca * se, nl = Math.hypot(nx, ny) || 1;
+    ctx.save(); ctx.translate(34, 38); ctx.strokeStyle = css("--ink-2"); ctx.fillStyle = css("--ink-2"); ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo((nx / nl) * 16, (ny / nl) * 16); ctx.stroke();
+    ctx.font = `700 12px ${css("--f-titulo")}`; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("N", (nx / nl) * 26, (ny / nl) * 26); ctx.restore();
+    const c = D.capas[nombre];
+    $("#t-titulo").textContent = `${nombre}: la quema está ${TXT[nombre].altitud} de altitud`;
+    $("#t-texto").textContent = `${TXT[nombre].terreno} Modelo de elevación Copernicus (30 m; de ${f0(c.z_min)} a ${f0(c.z_max)} m en el recuadro) con la imagen Sentinel-2 del ${fecha(c.fecha_despues)} encima. Arrastra la imagen o usa los controles para girarla.`;
+    $$("[data-tex]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tex === tex)));
   };
-  const giroIn = document.getElementById("giro-3d"), inclIn = document.getElementById("incl-3d");
-  giroIn.addEventListener("input", () => { giro = +giroIn.value; drawRelieve(); });
-  inclIn.addEventListener("input", () => { incl = +inclIn.value; drawRelieve(); });
-  const cv = document.getElementById("canvas-3d");
-  let arrastre = null;
-  cv.addEventListener("pointerdown", (ev) => { arrastre = { x: ev.clientX, y: ev.clientY, g: giro, i: incl }; cv.setPointerCapture(ev.pointerId); });
-  cv.addEventListener("pointermove", (ev) => {
-    if (!arrastre) return;
-    giro = (arrastre.g + (ev.clientX - arrastre.x) * 0.5 + 360) % 360;
-    incl = Math.max(20, Math.min(80, arrastre.i + (ev.clientY - arrastre.y) * 0.3));
-    giroIn.value = giro; inclIn.value = incl; drawRelieve();
+  let pendiente3d = false;
+  const pedir3D = () => { if (pendiente3d) return; pendiente3d = true; requestAnimationFrame(() => { pendiente3d = false; dibujar3D(); }); };
+  const giroIn = $("#giro"), inclIn = $("#incl"), c3d = $("#c3d");
+  giroIn.addEventListener("input", () => { giro = +giroIn.value; pedir3D(); });
+  inclIn.addEventListener("input", () => { incl = +inclIn.value; pedir3D(); });
+  let arr = null;
+  c3d.addEventListener("pointerdown", (ev) => { arr = { x: ev.clientX, y: ev.clientY, g: giro, i: incl }; c3d.setPointerCapture(ev.pointerId); });
+  c3d.addEventListener("pointermove", (ev) => {
+    if (!arr) return;
+    giro = (((arr.g - (ev.clientX - arr.x) * 0.45) % 360) + 360) % 360;
+    incl = Math.max(15, Math.min(75, arr.i + (ev.clientY - arr.y) * 0.25));
+    giroIn.value = giro; inclIn.value = incl; pedir3D();
   });
-  cv.addEventListener("pointerup", () => { arrastre = null; });
+  ["pointerup", "pointercancel"].forEach((t) => c3d.addEventListener(t, () => { arr = null; }));
 
-  const drawMetodo = () => {
-    if (ok("decisiones")) fillTable(document.getElementById("tabla-decisiones"), rows("decisiones"), [["tema"], ["decision"], ["por_que"]], ["tema"]);
+  // ---------- cifras oficiales y método
+  const dibujarOficiales = () => {
+    const f1 = L.format(".1f");
+    $("#oficiales").replaceChildren(...D.casos.map((c) => {
+      const hay = c.ha_oficial != null;
+      const fuente = el("p", { style: "font-size:.88rem;color:var(--ink-3)" }, `Fuente: ${c.fuente_oficial}.`);
+      if (c.url_oficial) fuente.append(" ", el("a", { href: c.url_oficial, target: "_blank", rel: "noopener", text: "Ver reporte (PDF)" }));
+      return el("div", { class: "panel" }, el("div", { class: "panel-cuerpo" },
+        el("h3", { text: `${c.distrito} · ${c.provincia}` }),
+        el("div", { class: "comparar" },
+          el("div", {}, el("span", { class: "l", text: "Cifra oficial (COEN-INDECI)" }), el("span", { class: "v" + (hay ? "" : " sin"), text: hay ? `${f0(c.ha_oficial)} ha` : "Sin reporte" })),
+          el("div", {}, el("span", { class: "l", text: "Medición Sentinel-2" }), el("span", { class: "v", style: "color:var(--fuego)", text: `${f0(c.ha_conservadora)}–${f0(c.ha_amplia)} ha` }))),
+        el("p", { class: "texto", text: hay
+          ? `${c.estado_oficial}. ${c.personas_oficial}. El reporte coincide en lugar y fechas con los focos VIIRS. Su cifra es una evaluación rápida en campo; el satélite mide entre ${f1(c.ha_conservadora / c.ha_oficial)} y ${f1(c.ha_amplia / c.ha_oficial)} veces más.`
+          : "Un incendio de cientos de hectáreas en pastizal, sin daños a personas, puede no llegar al registro nacional. Así la quema de la puna queda fuera de las estadísticas." }),
+        fuente));
+    }));
+    const n = D.nacional[0];
+    $("#limpieza").textContent = `Antes de agrupar los focos quitamos ${f0(n.quitados_confianza_baja)} de confianza baja, ${f0(n.quitados_fuente_fija)} fuentes fijas (el mismo píxel con calor 5 o más de los 8 días) y ${f0(n.quitados_volcan)} cerca de volcanes activos. Quedaron ${f0(n.focos_limpios)} focos.`;
+    $("#decisiones").replaceChildren(el("thead", {}, el("tr", {}, el("th", { text: "Tema" }), el("th", { text: "Decisión" }), el("th", { text: "Por qué" }))),
+      el("tbody", {}, ...D.decisiones.map((r) => el("tr", {}, el("td", { text: r.tema }), el("td", { text: r.decision }), el("td", { text: r.por_que })))));
   };
 
-  function draw() {
-    fillMarks();
-    if (tab === "nacional") drawNacional();
-    if (tab === "quemado") drawQuemado();
-    if (tab === "alcance") drawAlcance();
-    if (tab === "relieve") drawRelieve();
-    if (tab === "metodo") drawMetodo();
-  }
-  dash.onData(draw);
-  const pedido = location.hash.slice(1);
-  if (pedido && document.getElementById(pedido)?.dataset.page) show(pedido);
+  // ---------- estado y eventos
+  const ponerCaso = (c) => {
+    if (c === caso) return;
+    caso = c;
+    $$("[data-caso]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.caso === caso)));
+    dibujarQuemado(); dibujarAlcance(); pedir3D();
+  };
+  $$("[data-caso]").forEach((b) => b.addEventListener("click", () => ponerCaso(b.dataset.caso)));
+  $$("[data-capa]").forEach((b) => b.addEventListener("click", () => { capa = b.dataset.capa; dibujarAlcance(); }));
+  $$("[data-orden]").forEach((b) => b.addEventListener("click", () => { orden = b.dataset.orden; dibujarRanking(); }));
+  $$("[data-tex]").forEach((b) => b.addEventListener("click", () => { tex = b.dataset.tex; pedir3D(); }));
+  ["#q-dnbr", "#q-borde", "#q-focos"].forEach((s) => $(s).addEventListener("change", aplicarCasillas));
+  cortina.addEventListener("input", () => qEstado?.mover(+cortina.value));
+
+  const enlaces = $$(".nav nav a");
+  const obs = new IntersectionObserver((ents) => ents.forEach((en) => {
+    if (en.isIntersecting) enlaces.forEach((a) => a.setAttribute("aria-current", String(a.getAttribute("href") === "#" + en.target.id)));
+  }), { rootMargin: "-40% 0px -55% 0px" });
+  $$(".pagina > section[id]").forEach((s) => obs.observe(s));
+
+  const todo = () => { dibujarPais(); dibujarRanking(); dibujarQuemado(); dibujarAlcance(); pedir3D(); };
+  const pagina = $(".pagina");
+  let ancho = 0;
+  new ResizeObserver(() => { const a = pagina.clientWidth; if (D && Math.abs(a - ancho) > 4) { ancho = a; todo(); } }).observe(pagina);
+  new MutationObserver(() => D && todo()).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => D && todo());
+
+  const leer = (ruta) => fetch(ruta).then((r) => { if (!r.ok) throw new Error(ruta); return r.json(); });
+  const NOMBRES = ["nacional", "incendios", "departamentos", "casos", "cobertura", "zonas", "sensibilidad", "edificaciones", "focos_casos", "worldpop", "area_quemada", "decisiones"];
+  Promise.all([...NOMBRES.map((n) => leer(`datos/${n}.json`)), leer("web/capas.json")])
+    .then(([nacional, incendios, departamentos, casos, cobertura, zonas, sens, edif, focos, worldpop, area, decisiones, capas]) => {
+      D = { nacional, incendios, departamentos, casos, cobertura, zonas, sens, edif, focos, worldpop, area, decisiones, capas };
+      encabezado(); dibujarOficiales();
+      ancho = pagina.clientWidth;
+      todo();
+      const hash = location.hash.slice(1);
+      if (hash && document.getElementById(hash)) document.getElementById(hash).scrollIntoView();
+    })
+    .catch((err) => {
+      $$(".cargando").forEach((c) => { c.textContent = "No se pudieron cargar los datos del monitor. Recarga la página."; });
+      console.error(err);
+    });
 })();
 </script>

@@ -1,4 +1,5 @@
-"""Prepara los archivos de datos del monitor publicado en Claude (uno por fuente) a partir de datos/procesados."""
+"""Prepara los datos del monitor web (un JSON por fuente) a partir de datos/procesados.
+Las imágenes y la malla 3D salen de preparar_imagenes.py."""
 import json
 from pathlib import Path
 
@@ -36,14 +37,14 @@ guardar("departamentos", [{"departamento": r.NOMBDEP.title(), "geometria": json.
                           for r in dep.itertuples()])
 
 # Los dos incendios del Cusco
-casos, cob, zon, sens, edif, focos, celdas, areas, relieve = [], [], [], [], [], [], [], [], []
+casos, cob, zon, sens, edif, focos, celdas, areas = [], [], [], [], [], [], [], []
 for nombre, c in t["casos"].items():
     o = c["oficial"]
     nubes = c["nubes_pct"]
     fechas_antes = c["imagenes_antes"]
     casos.append({"incendio": nombre, "distrito": c["distrito"].title(), "provincia": c["provincia"].title(),
                   "fuego_inicio": c["fuego_viirs"][0], "fuego_fin": c["fuego_viirs"][1], "focos": c["focos"],
-                  "huella_viirs_ha": round(c["huella_viirs_ha"]), "ha_conservadora": round(c["ha_conservadora"]),
+                  "huella_viirs_ha": round(c["huella_viirs_ha"]), "ha_conservadora": round(c["ha_conservadora"] - 1e-6),  # empate x,5 hacia abajo, como en la tabla de sensibilidad
                   "ha_amplia": round(c["ha_amplia"]),
                   "imagen_antes": " + ".join(fechas_antes), "nubes_antes_pct": nubes[fechas_antes[0]],
                   "imagen_despues": c["imagen_despues"], "nubes_despues_pct": nubes[c["imagen_despues"]],
@@ -73,14 +74,7 @@ for nombre, c in t["casos"].items():
     for cifra in ("conservadora", "amplia"):
         geom = c["area_quemada"][cifra]["features"][0]["geometry"]
         areas.append({"incendio": nombre, "cifra": cifra, "ha": round(c[f"ha_{cifra}"]), "geometria": geom})
-    r = c["relieve"]
-    z = np.array(r["z"])[::2, ::2]; d = np.array(r["dnbr"])[::2, ::2]
-    xs = np.array(r["x_km"])[::2]; ys = np.array(r["y_km"])[::2]
-    for i in range(z.shape[0]):
-        for j in range(z.shape[1]):
-            relieve.append({"incendio": nombre, "fila": i, "col": j, "x_km": round(float(xs[j]), 2),
-                            "y_km": round(float(ys[i]), 2), "altitud_m": None if np.isnan(z[i, j]) else int(z[i, j]), "dnbr": round(float(d[i, j]), 2)})
 
 guardar("casos", casos); guardar("cobertura", cob); guardar("zonas", zon); guardar("sensibilidad", sens)
 guardar("edificaciones", edif); guardar("focos_casos", focos); guardar("worldpop", celdas)
-guardar("area_quemada", areas); guardar("relieve", relieve); guardar("decisiones", t["decisiones"])
+guardar("area_quemada", areas); guardar("decisiones", t["decisiones"])
