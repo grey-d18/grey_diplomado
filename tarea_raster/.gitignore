@@ -1,0 +1,8 @@
+# Open Buildings: más de 100 MB por bloque (GitHub los rechaza). Se descargan con el notebook 1.
+datos/raw/open_buildings_*.csv.gz
+
+# Entorno
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
