@@ -124,28 +124,14 @@ python3 hacer_video.py                                     # paso 5 → salidas/
 - **No se usó Qwen3.8 en local** por falta de memoria (ver arriba). El guion lo escribió Qwen en chat.qwen.ai.
 - **Nombres propios.** Qwen3-TTS pronuncia "Livitaca" y "Huanoquite" de forma algo insegura. Un modelo de 1.7B o una grabación de referencia que incluya esos nombres podría mejorarlo.
 
-## Privacidad: qué no se sube
+## Qué hay en este repositorio
 
-El repositorio no incluye la voz. Quedan fuera (ver `.gitignore`):
-- la grabación original y su transcripción,
-- `salidas/reel.wav`, `salidas/escenas/` y `salidas/reel.mp4`, que tienen la voz clonada.
+Siguiendo la entrega de la tarea, y para que la voz no quede pública, aquí están solo:
 
-Se suben el código, el guion, la respuesta de Qwen, los subtítulos, la portada y los posts. Con eso se ve el trabajo sin publicar la voz.
+| Archivo | Qué es |
+|---|---|
+| `README.md` | Este documento, con qué se corrigió del guion y por qué |
+| `salidas/guion.json` | Guion revisado contra la fuente |
+| `salidas/posts.md` | Los tres posts que acompañan al reel |
 
-## Archivos
-
-| Archivo | Qué es | En el repo |
-|---|---|---|
-| `Incendios_puna_Cusco_octubre_2026.pdf` | Fuente (paso 1) | sí |
-| `guion.py` | Prompt y validación del guion (paso 2) | sí |
-| `respuesta.txt` | Lo que respondió Qwen, sin corregir | sí |
-| `salidas/guion.json` | Guion revisado (pasos 2 y 3) | sí |
-| `voz.py` | Narración con voz clonada (paso 4) | sí |
-| `hacer_video.py` | Subtítulos y video (paso 5) | sí |
-| `salidas/reel.srt` | Subtítulos aparte | sí |
-| `salidas/portada.png` | Portada del reel | sí |
-| `salidas/posts.md` | Tres posts (Instagram/Facebook, X, LinkedIn) | sí |
-| `prompt.txt` | Prompt para el chat; se regenera con `guion.py` | no |
-| `salidas/escenas.json` | Tiempos de cada escena; se regenera con `voz.py` | no |
-| grabación de referencia | Tu voz original | no |
-| `salidas/reel.wav`, `salidas/escenas/`, `salidas/reel.mp4` | Voz clonada y video | no |
+No se suben audios ni el video: ni la grabación original, ni la narración con voz clonada, ni `reel.mp4`. Los scripts (`guion.py`, `voz.py`, `hacer_video.py`), el PDF fuente, la respuesta original de Qwen, los subtítulos y la portada se quedaron en la computadora local.
