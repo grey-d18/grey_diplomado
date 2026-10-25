@@ -33,13 +33,49 @@ clip_002,datos/raw/audio/clip_002.wav,136.3,es,"[HABLANTE_1] Buenos días, aquí
 [HABLANTE_2] Eso es una gente, ¿no? De juntarse, o sea, tomar, hacer barras. Y ese estilo, mirar, pues eso es lo que puedo hacer.
 [HABLANTE_1] Muchas gracias por su opinión. ¿Un mensaje final que deseará?
 [HABLANTE_2] Que Perú gane. Es todo lo que yo pienso. Esperamos que ganemos
-[HABLANTE_1] Muchas gracias","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,
+[HABLANTE_1] Muchas gracias","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,"[0:00] Buenos días, aquí son las 10 y 28 y estoy con una señora que va a darme su opinión acerca del partido de hoy.
+[0:08] ¿Puede decirme su nombre por favor?
+[0:10] [PERSONA_26].
+[0:12] Mucho gusto, yo soy [PERSONA_31], soy alumno de la Universidad Nacional Mayor de San Marcos
+[0:17] y le voy a hacer estas preguntas acerca del partido de hoy.
+[0:22] ¿Qué expectativas tiene acerca de este partido?
+[0:26] ¿Quién piensa que va a atacar más o defender?
+[0:29] Bueno, esperamos que Perú ganemos, ¿no? Espero que Padula eche goles
+[0:38] Muy bien, la siguiente pregunta es acerca de qué jugador piensa que va a ser más decisivo en este partido
+[0:47] Bueno, Cueva, Orejas, El Orejitas
+[0:50]Muy bien, y la tercera pregunta es acerca de cuál es el resultado que espera en este partido
+[0:59] Quién gana y a cuánto, por cuánto
+[1:03] Bueno esperemos que gane Perú con 2 a 0 sino también que sea como, hay que esperar lo que Dios, primeramente es Dios, si perdemos también hay que esperar lo mejor, porque están demostrando lo mejor que pueden, no, nuestros jugadores, no.
+[1:21] Muy bien, o sea, está diciendo que está esperando lo mínimo, no,  no importa si ganemos 1 a 0 o perdamos, lo más importante es Dios.
+[1:30] Y la última pregunta, eh ¿qué piensa del fútbol como unión de masas?
+[1:35] Porque como puede ver, muy pronto, en muchos locales va a haber muchas personas viendo este partido.
+[1:43] ¿Qué piensa acerca de ello?
+[1:45] Eso. Eso es una alegría, una emoción pues que tiene la gente, ¿no?
+[1:52] De juntarse, o sea, tomar, hacer barras.
+[1:57] Irse al partido, mirar, eso es lo que puedo opinar.
+[2:02] Muchas gracias por su opinión.
+[2:04] ¿Un mensaje final que desea dar?
+[2:07] Que Perú gane.
+[2:09] Es todo lo que yo pienso.
+[2:12] Esperamos que ganemos
+[2:14] Muchas gracias
+"
 clip_003,datos/raw/audio/clip_003.wav,29.93,es,"[HABLANTE_1] normal esperando el resultado pero como lo ves como ves a perú ahorita que está
-[HABLANTE_2] no se entiende no se están entendiendo no hay como cuatro jugadores que están por las puras y ya pe ahora el técnico tiene que hacer justo los cambios supongo esos cuatro jugadores carrillo canchita este trauco y","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,
+[HABLANTE_2] no se entiende no se están entendiendo no hay como cuatro jugadores que están por las puras y ya pe ahora el técnico tiene que hacer justo los cambios supongo esos cuatro jugadores carrillo canchita este trauco y","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,"[0:00] normal esperando el resultado nomas
+[0:03] pero como lo ves como ves a perú ahorita que está
+[0:06] Que como lo veo a Perú, que Perú esta hasta las. 
+[0:08] Esta... No se entiende, pe, no se están entendiendo. No, no, no. Hay como cuatro jugadores que están por las puras y
+[0:16] ya pe y ahora el técnico tiene que hacer justo los cambios supongo esos cuatro jugadores carrillo
+[0:23] canchita este trauco y ala el otro si no
+"
 clip_004,datos/raw/audio/clip_004.wav,20.15,es,"[HABLANTE_1] ¿Cómo te sientes cuando hay partidos de Perú?
 [HABLANTE_2] Contesta que porque va a ganar Perú.
 [HABLANTE_1] ¿Y si no gana Perú? ¿Y si no gana Perú?
-[HABLANTE_2] Pues me pongo triste.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,
+[HABLANTE_2] Pues me pongo triste.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,"[0:01] ¿Cómo te sientes cuando hay partidos de Perú?
+[0:05] Contenta que porque va a ganar Perú.
+[0:12] ¿Y si no gana Perú? ¿Y si no gana Perú?
+[0:17] Pues me pongo triste.
+"
 clip_005,datos/raw/audio/clip_005.wav,196.03,es,"[HABLANTE_1] A ver, a ver, ¿cuál es la pregunta?
 [HABLANTE_2] A ver, buenas noches, primeramente, mi nombre es [PERSONA_33], soy estudiante de la Universidad de San Marcos. A ver, un momento, por favor.
 [HABLANTE_1] Yo te voy a decir la verdad, ¿eh?
@@ -64,7 +100,24 @@ clip_006,datos/raw/audio/clip_006.wav,96.13,es,"[HABLANTE_1] Nos encontramos aqu
 [HABLANTE_2] Las características, que cada vez vamos avanzando de a poco Como por ejemplo, que no podemos comparar la época del Revinato con la actualidad Cada momento va avanzando, son características que vas desarrollando
 [HABLANTE_1] ¿Y cuáles serían las características negativas que usted puede observar?
 [HABLANTE_2] Indudablemente las malas funciones que hacen nuestras autoridades Si lo vemos en el lado político, la corrupción y todo eso
-[HABLANTE_1] Muchas gracias señor, felices fiestas padres","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,
+[HABLANTE_1] Muchas gracias señor, felices fiestas padres","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,"[0:00] Nos encontramos aquí. Va. Ya a ver. Buenas noches, nos encontramos aqui con el señor [PERSONA_39], [PERSONA_39].
+[0:15] El señor [PERSONA_39]. Señor [PERSONA_39], e sta entrevista va a ser subida a internet, ¿está usted de acuerdo con eso?
+[0:20] Sí. 
+[0:21] Ya, muchas gracias. La primera pregunta es, ¿qué significa el Perú para usted?
+[0:26] ¿Qué significa el Perú?
+[0:29] Yo pienso que para cada peruano el Perú debe significar casi todo
+[0:32] porque es la tierra donde estamos, si lo vemos en el aspecto geográfico
+[0:40] en lo cual a pesar de nuestras descendencias, de todas nuestras descendencias
+[0:46] es la tierra que nos acoge, que es ese límite que se llama Perú
+[0:50] En el Perú, ¿cuáles serían las características positivas más resaltantes que usted puede notar?
+[0:58] Las características, que cada vez vamos avanzando de a poco
+[1:01] Como por ejemplo, que no podemos comparar la época del Virreinal, del Virreinato con la actualidad
+[1:07] Cada momento va avanzando, son características que vas desarrollando
+[1:14] ¿Y cuáles serían las características negativas que usted puede observar?
+[1:18] Indudablemente las malas funciones que hacen nuestras autoridades
+[1:27] Si lo vemos en el lado político, la corrupción y todo eso
+[1:32] Muchas gracias señor, felices fiestas patrias
+"
 clip_007,datos/raw/audio/clip_007.wav,77.44,es,"[HABLANTE_1] Buenas noches, soy [PERSONA_33], estudiante de la San Marcos, esta entrevista va a ser registrada en internet, ¿está de acuerdo usted?
 [HABLANTE_2] Sí, estoy de acuerdo.
 [HABLANTE_1] Muy bien, para usted, ¿qué es el Perú?
@@ -93,13 +146,41 @@ clip_009,datos/raw/audio/clip_009.wav,48.25,es,"[HABLANTE_1] Por algo le hemos d
 [HABLANTE_4] Yo... bueno, sí
 [HABLANTE_1] Desconocemos, sí
 [HABLANTE_4] a ver, este
-[HABLANTE_1] que más, que no falta que no falta, que no falta falta que venga el encargado, ya, va a venir el encargado va a venir este [NOMBRE]","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",4,
+[HABLANTE_1] que más, que no falta que no falta, que no falta falta que venga el encargado, ya, va a venir el encargado va a venir este [NOMBRE]","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",4,"[0:00] Por algo le hemos dado desayuno, ¿no?
+[0:03] Claro, despacito, fuerte, para que nos escuche Moyano
+[0:07] Para que nos escuche Montoya
+[0:10] Para que nos escuche Patricia Juárez, Patricia Chirinos
+[0:14] ¿Estamos de acuerdo? A ver, todos juntos, ¡Fuerte!
+[0:17] ¡Cierre de congreso!
+[0:19] ¡Cierre de congreso!
+[0:21] ¡Cierre de congreso!
+[0:23] ¡Cierre de congreso!
+[0:24] ¡Fabuloso!
+[0:30] Yo... bueno, sí
+[0:34] Desconocemos, sí
+[0:37] a ver, este
+[0:39] que más, que nos falta
+[0:41] que nos falta, que nos falta
+[0:42] falta que venga el encargado, ya, va a venir el encargado
+[0:45] va a venir este [NOMBRE]
+"
 clip_010,datos/raw/audio/clip_010.wav,54.26,es,"[HABLANTE_1] Sí, déjalo ya, así, ya está lavando, ya está lavando, ya está lavando ya, ya, ya, ya, ya, ya.
 [HABLANTE_2] Buenas tardes, me presento, soy [PERSONA_37] y quería preguntarle si tengo su consentimiento para esta entrevista ya publicada. Sí, claro. La primera pregunta es, ¿qué significa la marcha para usted?
 [HABLANTE_3] Para mí la marcha del orgullo es luchar por mis derechos para no tener miedo a salir a la calle, y a mostrar quién soy yo, y tener miedo de que alguien me haga algo, y buscar el respeto hacia mi persona, y hacia las personas como yo, de parte de la comunidad.
 [HABLANTE_2] Muchas gracias. Y la segunda y última pregunta es, ¿qué lisa celebraría la juventud de hoy?
 [HABLANTE_3] Que no tengan miedo, porque somos muchos, somos muchos los que nos vamos a recibir con los brazos abiertos, que si de repente en su familia no los apoya, acá tienen una familia que los va a recibir siempre.
-[HABLANTE_2] Muchas gracias.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",3,
+[HABLANTE_2] Muchas gracias.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",3,"[0:00] Sí, déjalo ya, así, ya está grabando, ya está grabando, ya está grabando aja ja, ja ,ja.
+[0:09] Buenas tardes, me presento, soy [PERSONA_37] y quería preguntarle si tengo su consentimiento para esta entrevista sea publicada.
+[0:15] Sí, claro.
+[0:16] La primera pregunta es, ¿qué significa la marcha para usted?
+[0:22] Para mí la marcha del orgullo es luchar por mis derechos para no tener miedo a salir a la calle,
+[0:27] a mostrar quién soy yo, tener miedo de que alguien me haga algo, y buscar el respeto
+[0:31] hacia mi persona, y hacia las personas como yo, de parte de la comunidad.
+[0:36] Muchas gracias. Y la segunda y última pregunta es, ¿qué mensaje le daría a la juventud de hoy?
+[0:42] Que no tengan miedo, porque somos muchos, somos muchos los que nos vamos a recibir con los brazos abiertos,
+[0:47] que si de repente en su familia no los apoya, acá tienen una familia que los va a recibir siempre.
+[0:52] Muchas gracias.
+"
 clip_011,datos/raw/audio/clip_011.wav,77.35,es,"[HABLANTE_1] Sí, yo soy [PERSONA_30] de la Facultad de Ciencias Biológicas y ahora le voy a hacer preguntas al señor [PERSONA_41], que nos va a responder en primer lugar ¿Qué pensás que le daría a la juventud del país?
 [HABLANTE_2] Bueno, el amar es amar, ¿no? Creo que cada uno tiene una orientación, tiene una preferencia y nadie debe ser juzgado por esto sabemos que la sociedad peruana es un tanto conservadora pero poco a poco confío de que abriremos más la mente para que muchos de nosotros en la comunidad podamos amar sin ninguna restricción
 [HABLANTE_1] y también me gustaría preguntarle ¿qué significa esta marcha por usted?
@@ -136,11 +217,53 @@ clip_012,datos/raw/audio/clip_012.wav,95.04,es,"[HABLANTE_1] Ahora, mi nombre es
 [HABLANTE_6] Está bien Está bien Sí
 [HABLANTE_1] Gracias
 [HABLANTE_6] Listo ¡Gracias por ver!","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",9,
-clip_013,datos/raw/audio/clip_013.wav,81.6,es,"[HABLANTE_1] ¿Cuál es su nombre? [PERSONA_27]. Ah, ok. Usted, este, me acaba de decir que no es del pueblo. ¿Usted de dónde es? La misma sitio o no. Yo soy de... misma Pumbabamba. Este es un distrito. Usted es de la provincia, ahí Chuyas es un distrito. Ah, claro. Y ¿cómo así usted ha venido aquí? Ah, como conozco todos los años vengo. Ah, viene todos los años, sí. ¿Y hay algo de especial en esta ocasión en el que usted ha venido o antes ha habido tal vez más bandas, más personas? No, es la misma costumbre, que se acabaron pasar esos. Claro, ¿y qué otras cosas más van a ocurrir más adelante? Otros bailes también, depende del mayordomo o depende de donadores que hay, si hay bailes, bailes costumistas. Claro, ¿normalmente hay esta cantidad de gente o a veces hay más o menos? Más tarde llenan. más tarde vienen más personas hay bastante es como vienen para misa como dicen entonces ahí llegamos personas que nos gusta escuchar la misa y se quedan hasta tarde entre cinco o seis y ya estamos viendo ya nosotros ya se van muchas gracias señor","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
-clip_015,datos/raw/audio/clip_015.wav,39.24,es,"[HABLANTE_1] Buenos días, joven. Claro que sí, la fiesta de Santo Patrón de Chuyas Taitapalli es muy importante para mí y para mi familia. ¿Por qué? Porque nosotros desde muy niña yo sigo y el tradición, entonces a mí me ha hecho muchos milagros. Es por ello, yo sigo desde muy chiquita, desde mis padres, entonces seguimos el costumbre, todos los chuiacinos, no solo yo, mi familia, todos creemos a nuestro santo patrón. Muchas gracias.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
-clip_016,datos/raw/audio/clip_016.wav,43.76,es,"[HABLANTE_1] Una de las anécdotas que ha marcado mi vida es cuando estuve muy pequeña y mis padres también se dedicaban a la siembra de coca, pero vino la erradicación y con todos los vecinos, todas las partes que sembraban se vieron afectadas porque no tenían otro tipo de sembríos y erradicaron la coca de raíz y fue muy duro un par de meses, por qué no decir unos años para recuperarse, volver a restablecerse, sembrar lo que es el tema de otros productos alternativos para poder sustentar el tema económico y emocional sobre todo para el tema de que las familias que no tenían con qué compartir o sustentar las casas, comida, los ingresos, los estudios, entre otras cosas.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
+clip_013,datos/raw/audio/clip_013.wav,81.6,es,"[HABLANTE_1] ¿Cuál es su nombre? [PERSONA_27]. Ah, ok. Usted, este, me acaba de decir que no es del pueblo. ¿Usted de dónde es? La misma sitio o no. Yo soy de... misma Pumbabamba. Este es un distrito. Usted es de la provincia, ahí Chuyas es un distrito. Ah, claro. Y ¿cómo así usted ha venido aquí? Ah, como conozco todos los años vengo. Ah, viene todos los años, sí. ¿Y hay algo de especial en esta ocasión en el que usted ha venido o antes ha habido tal vez más bandas, más personas? No, es la misma costumbre, que se acabaron pasar esos. Claro, ¿y qué otras cosas más van a ocurrir más adelante? Otros bailes también, depende del mayordomo o depende de donadores que hay, si hay bailes, bailes costumistas. Claro, ¿normalmente hay esta cantidad de gente o a veces hay más o menos? Más tarde llenan. más tarde vienen más personas hay bastante es como vienen para misa como dicen entonces ahí llegamos personas que nos gusta escuchar la misa y se quedan hasta tarde entre cinco o seis y ya estamos viendo ya nosotros ya se van muchas gracias señor","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,"[0:00] ¿Cuál es su nombre? [PERSONA_27]. Ah, ok. Usted, este, me acaba de decir que no es del pueblo. ¿Usted de dónde es?
+[0:06] La misma sitio o no. Yo soy de... misma Pumbabamba. Este es un distrito.
+[0:12] Usted es de la provincia, y Chuyas es un distrito. Ah, claro. Y ¿cómo así usted ha venido aquí?
+[0:18] Ah, como conozco todos los años vengo. Ah, viene todos los años, sí.
+[0:22] ¿Y hay algo de especial en esta ocasión en el que usted ha venido o antes ha habido tal vez más bandas, más personas?
+[0:30] No, es la misma costumbre, que se acabaron pasar esos.
+[0:33] Claro, ¿y qué otras cosas más van a ocurrir más adelante?
+[0:37] Otros bailes también, depende del mayordomo o depende de donadores que hay, si hay bailes, bailes costumbristas.
+[0:47] Claro, ¿normalmente hay esta cantidad de gente o a veces hay más o menos?
+[0:50] Más tarde llenan.
+[0:51] más tarde vienen más personas hay bastantes del pueblo. Esto es como vienen para misa como dicen, no, entonces ahí
+[1:02] llegamos personas que nos gusta escuchar la misa y se quedan hasta tarde ahi disfrutando del evento. Entre cinco o seis y ya
+[1:12] estamos yendo ya nosotros. Ah ya se van, Otro vienen ya. Muchas gracias señora.
+"
+clip_015,datos/raw/audio/clip_015.wav,39.24,es,"[HABLANTE_1] Buenos días, joven. Claro que sí, la fiesta de Santo Patrón de Chuyas Taitapalli es muy importante para mí y para mi familia. ¿Por qué? Porque nosotros desde muy niña yo sigo y el tradición, entonces a mí me ha hecho muchos milagros. Es por ello, yo sigo desde muy chiquita, desde mis padres, entonces seguimos el costumbre, todos los chuiacinos, no solo yo, mi familia, todos creemos a nuestro santo patrón. Muchas gracias.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,"[0:00] Buenos días, joven. Claro que sí, la fiesta de Santo Patrón de Chuyas Taitapalli es muy importante para mí y para mi familia. ¿Por qué? Porque nosotros desde muy niña yo sigo y el tradición, entonces a mí me ha hecho muchos milagros.
+[0:21] Es por ello, yo sigo desde muy chiquita, desde mis padres, entonces seguimos el costumbre, todos los chuyacinos, no solo yo, mi familia, todos creemos a nuestro santo patrón. Muchas gracias.
+"
+clip_016,datos/raw/audio/clip_016.wav,43.76,es,"[HABLANTE_1] Una de las anécdotas que ha marcado mi vida es cuando estuve muy pequeña y mis padres también se dedicaban a la siembra de coca, pero vino la erradicación y con todos los vecinos, todas las partes que sembraban se vieron afectadas porque no tenían otro tipo de sembríos y erradicaron la coca de raíz y fue muy duro un par de meses, por qué no decir unos años para recuperarse, volver a restablecerse, sembrar lo que es el tema de otros productos alternativos para poder sustentar el tema económico y emocional sobre todo para el tema de que las familias que no tenían con qué compartir o sustentar las casas, comida, los ingresos, los estudios, entre otras cosas.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,"[0:00] Una de las anécdotas que haiga marcado mi vida es cuando estuve muy pequeña y mis padres también se dedicaban a la siembra de coca,
+[0:08] pero vino la erradicación y con todos los vecinos, todas las partes que sembraban se vieron afectadas porque no tenían otro tipo de sembríos
+[0:16] y erradicaron la coca de raíz y fue muy duro un par de meses, por qué no decir unos años para recuperarse,
+[0:24] volver a restablecerse, sembrar lo que es el tema de otros productos alternativos para
+[0:29] poder este sustentar el tema económico y emocional sobre todo para el tema de que las familias
+[0:36] que no tenían con qué compartir o sustentar las casas, comida, los ingresos, los estudios,
+[0:42] entre otras cosas.
+"
 clip_017,datos/raw/audio/clip_017.wav,53.14,es,"[HABLANTE_1] Pues mi infancia fue algo muy bonito desde un principio, aunque un poco de carencias con el tema agrícola, porque antes por la zona donde vivíamos era zona roja, lo cual solamente la gente se dedicaba a la siembra de plátano, a la casa, a la siembra de coca. y ha sido un largo tramo y un largo esfuerzo que hemos dejado la coca por el cacao entonces ahora hay mucha gente que se dedica ahora al cultivo de cacao ha sido algo alternativo a la siembra de coca así que había muchos avances, muchos cambios para el bien tanto económico como el tema económico, como el tema de un cambio de vida mejor.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
-clip_018,datos/raw/audio/clip_018.wav,110.16,es,"[HABLANTE_1] Yo casi iba mucho al cine de calle, claro, pero generalmente por donde yo vivía, no sé, Miraflores, y también iba al cine de Roma, que pasaba al cine italiano, al cine que está en Javier Prado, que me encantaba ese cine, ¿cómo se llama? Ahí era uno de mis favoritos, Javier Prado con Arequipa, iba un montón, porque ahí había cine asiático y después iba creo que el Roma es el más cerca del centro de Lima, que había cine italiano luego iba al cine bueno los cines del INSE que íbamos con mi papá en la matinée y había un cine ahí también en Petit Tuars que también iba y creo que he ido al cine Tauro Sí, ahora recuerdo, he ido al cine Tauro a ver 101 Dálmatas, en la versión antigua, obvio, y debe haber sido una, era niña, sí, era niña, pero recuerdo claramente el cine Tauro, que es hermoso, no me olvido nunca del foyer de entrada al cine Tauro, que es una obra arquitectónica preciosa, es el centro de Lima. Y me acuerdo del cartel de 101 Dalmatas allí, pero más la sensación de la película, que no me acuerdo casi nada, es más la sensación del cine, de estar allí en ese foyer, en esos vidrios que se veía en la calle, muy lindo.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
+clip_018,datos/raw/audio/clip_018.wav,110.16,es,"[HABLANTE_1] Yo casi iba mucho al cine de calle, claro, pero generalmente por donde yo vivía, no sé, Miraflores, y también iba al cine de Roma, que pasaba al cine italiano, al cine que está en Javier Prado, que me encantaba ese cine, ¿cómo se llama? Ahí era uno de mis favoritos, Javier Prado con Arequipa, iba un montón, porque ahí había cine asiático y después iba creo que el Roma es el más cerca del centro de Lima, que había cine italiano luego iba al cine bueno los cines del INSE que íbamos con mi papá en la matinée y había un cine ahí también en Petit Tuars que también iba y creo que he ido al cine Tauro Sí, ahora recuerdo, he ido al cine Tauro a ver 101 Dálmatas, en la versión antigua, obvio, y debe haber sido una, era niña, sí, era niña, pero recuerdo claramente el cine Tauro, que es hermoso, no me olvido nunca del foyer de entrada al cine Tauro, que es una obra arquitectónica preciosa, es el centro de Lima. Y me acuerdo del cartel de 101 Dalmatas allí, pero más la sensación de la película, que no me acuerdo casi nada, es más la sensación del cine, de estar allí en ese foyer, en esos vidrios que se veía en la calle, muy lindo.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,"[0:00] Yo casi iba mucho al cine de calle, claro, pero generalmente por donde yo vivía, no sé, Miraflores,
+[0:07] y también iba al cine de Roma, que pasaban cine italiano, al cine que estaba en Javier Prado,
+[0:18] que me encantaba ese cine, ¿cómo se llama?
+[0:22] Ay era uno de mis favoritos, Javier Prado con Arequipa, iba un montón,
+[0:26] porque ahí había cine asiático
+[0:30] y después iba
+[0:32] creo que el Roma es el más cerca
+[0:34] del centro de Lima, que había cine italiano
+[0:36] luego iba
+[0:38] al cine
+[0:40] eh bueno
+[0:44] los cines del INSE que íbamos con mi papá
+[0:46] a la matinée
+[0:47] eh había un cine ahí
+[0:51] también
+[0:53] en Petit Tuars
+[0:54] cerquita a Javier Prado también iba
+[0:56] y creo que he ido al cine Tauro
+[0:59] Sí, ahora recuerdo, he ido al cine Tauro a ver pelucul, eh 101 Dálmatas, la versión antigua, obvio, y debe haber sido una, era niña, sí, era niña, pero recuerdo claramente el cine Tauro, que es hermoso, no me olvido nunca del foyer de entrada al cine Tauro, que es una obra arquitectónica preciosa, es el centro de Lima.
+[1:30] Y me acuerdo del cartel de 101 Dalmatas allí, pero más la sensación que de la película, que no me acuerdo casi nada, es más la sensación del cine, de estar allí en ese foyer, en esos vidrios que se veía la calle, muy lindo.
+"
 clip_019,datos/raw/audio/clip_019.wav,212.93,es,"[HABLANTE_1] Yo he ido a muchas salas de las que ya no existen y que ahora son otras cosas, ¿no? Desde iglesias hasta la sunata, hasta todo, ¿no? Estamos hablando desde cines en el Callao, ¿no? Que ya no existen, cines en San Miguel, bueno, más los otros cines que están por otras partes, ¿no? Como por ejemplo el cine Roma o el cine Orrantia, ¿no? Todos esos cines seguidos ya no existen, ¿no? Pero si se trata de contar una anécdota, por ejemplo, puedo contarla del cine que menos conoce la gente. Cuando yo hablo de los cines de antes, todo el mundo se le dice Cino Rantia, sabe cuál es Cino Rantia, todo el mundo sabe lo que es el cine de Roma, todo el mundo sabe dónde quedaba el cine de San Felipe, incluso los cines del Callao, el cine de San Espeña, el cine porteño, ¿no? Todos esos eran ubicables, ¿no? Pero en San Miguel, para la gente que vivía en San Miguel, había un cine que se llamaba el cine Monarca, y solamente ya los muy muy cinéfilos y que saben todo cerca de toda la sala son los que sí se acuerdan de esa sala o la gente que vivía cerca, que vivía en Maranga, Pueblo Libre era un cine que quedaba cerca al cruce de Fossett con la Avenida La Marina y ese era mi cine preferido en realidad porque era el que quedaba más cerca de mi casa yo vivía muy cerca de lo que ahora es la UPC San Miguel muy cerca del cruce de Escardó con La Marina y bueno, por consecuencia cerca del cruce también de La Marina con la Avenida Fossett Y, bueno, yo siempre iba ahí de chiquita, ¿no? Porque, bueno, ahí fui donde crecí yo cuando estaba niña, ¿no? Y entonces siempre íbamos ahí o al Callao, ¿no? Porque nos íbamos a la punta y de ahí bajábamos y bajábamos al cine, ¿no? Pero tengo dos recuerdos bonitos, y bueno, en el Callao y en ese cine, ¿no? En el cine Monarca fue que vi por primera vez Star Wars. Y, claro, yo me fasciné con la película. Tenía siete años. Estamos hablando del año 77. y claro, yo la fui a ver en esa época pues no había VHS, no había nada, ¿no? La fui a ver 25 veces con mi mamá durante un verano al cine Monarca entonces mi mamá tuvo la paciencia de llevarme las 25 veces a ver la película porque quería oír otra vez y otra vez y otra vez me lo sabía en memoria y lo mismo pasó pero ya en el cine porteño del Callao con ETL Extraterrestre, que ya era un poquito más grande, que también la quería ir a ver una y otra vez al cine, son las películas que más recuerdo que vi una y otra vez en esos cines que ya no existen y que los recuerdo con mucho cariño, eran muy grandes y bueno, olían mal olían a crezos, porque limpiaban el piso con esta cosa que era repilante para matar las pulgas y todos los bichos que había en esos cines que tenían esta madera antigua y claro no había pues que la canchita y la coca cola que hay ahora, pero tú te llevabas tu comida y me acuerdo que también comprabas en la puerta cositas chiquitas, camotitos, papitas era todo más pequeñito, con tu inca-cola, con tus papitas para mí los mejores recuerdos de mi infancia a nivel de cine, los tengo en esos dos cines, que son como muy bonitos y donde hice maratones, digamos, de películas que bueno, que son parte de mi infancia, hasta que bueno, ya adolescente empecé a ver otro tipo de cine, pero yo he crecido con esas películas y bueno, son importantes, digamos para entender mi amor por el cine inicial, no todo pues es cine tipo filmoteca uno empieza a veces con cine que son aventuras y que son películas aptas para todos bueno, es lo que te","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",1,
 clip_020,datos/raw/audio/clip_020.wav,87.12,es,"[HABLANTE_1] A ver, la primera vez que fui al cine fue el cine Callao, un cine normal, que ahora es inglesa. Bueno, en ese tiempo se veía bonito y grande, ¿no? La primera película que vi se llamaba Alcón. La protagonizaba a Rocky Stallone. Me acuerdo que era un camionero que andaba con su hijo y hacía competencia de fuerza. Muy bonita. Me acuerdo que cuando fui al cine, fue con mi papá. Él me llevaba al cine última función, me acuerdo. En última función en el tiempo empezaba como a las 10. Y terminaba plan de 2 y 40, una más, un poquito más. y de ahí nos íbamos a trabajar me acuerdo, trabajábamos en la amanecida en el estilo mi papá tenía un negocio de calzado y nos íbamos y trabajábamos toda la noche para el día siguiente poder estar más solgado me acuerdo que era un viernes viernes para sábado lo fui a ver con mi papá y es algo que fue muy muy impactante para mí
 [HABLANTE_2] Gracias.","faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False · diarización WeSpeaker ResNet34 + clustering (umbral 0,7)",2,
