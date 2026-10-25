@@ -1046,29 +1046,6 @@ todo, a fixa o anplanch
 yCacassa eftaba
 beto lo ma to co
 acha foae","PaddleOCR 3.7.0 · PP-OCRv5_mobile_det + latin_PP-OCRv5_mobile_rec (lang=es), CPU, detección a ≤1920 px, sin unwarping ni clasificador de orientación",
-doc_024,datos/raw/documentos/doc_024.jpg,manuscrito,https://commons.wikimedia.org/?curid=190398555,"N2t1 Ente Sonte 4t fomgeuat dJan blment al fice
-ca putac ca le froine ce bhincha d. la Hepableca del fouia
-[PERSONA_16]
-int cuate de 5 tambe d me rchecctes nmentoy-ute)
-Vailfri tcaid prope laute rtemment a joan Rit thi navic
-[PERSONA_16].
-ilyiate hica rioze de t coil foje bgitene cll drenive
-[PERSONA_17],;de l ) fuone [PERSONA_18],
-pacu S meld !roes uproentdce ns DrComgie
-m. tnzegrine r Tige Cd [NOMBRE], pntadda
-pro lo bite Ciaee Jeehia De le cc g fi
-El suserito certifica la
-forePtasty
-autenticidud de lo firan de
-ENOa
-A
--
-la presente fotostatica de
-TENINTE
-Bautiamo.
-PISCO
-Finen,3 do onoro do 92
-[NOMBRE] ain Yi CM","PaddleOCR 3.7.0 · PP-OCRv5_mobile_det + latin_PP-OCRv5_mobile_rec (lang=es), CPU, detección a ≤1920 px, sin unwarping ni clasificador de orientación",
 doc_025,datos/raw/documentos/doc_025.jpg,manuscrito,https://commons.wikimedia.org/?curid=67887441,"(132
 Vibexio
 Cnla cueda delor theye er irnco de Temexo de veveriertos Nover
@@ -1163,3 +1140,32 @@ and is part of the Peruvian National Cultural Heritage.
 Municipalidad
 de La Molina
 Melgarejo","PaddleOCR 3.7.0 · PP-OCRv5_mobile_det + latin_PP-OCRv5_mobile_rec (lang=es), CPU, detección a ≤1920 px, sin unwarping ni clasificador de orientación",
+doc_028,datos/raw/documentos/doc_028.jpg,manuscrito,https://commons.wikimedia.org/?curid=18644878,"69
+ a e i am anon dis dd cinegane fuatore cone
+yq.pg
+.
+Sero dela unte
+2
+
+fCo
+Cn Suang
+
+UranHaneiee
+Jaan
+
+dchagie
+Homrea   eny
+
+Joni I
+Diade sda adgnm
+Bo?k dumaFiarok
+
+Prar Cocte
+Joreg & tag
+Ano.sara
+Dophn hisBbji
+Elangun oe Willu
+C
+Jian Jaari
+
+","PaddleOCR 3.7.0 · PP-OCRv5_mobile_det + latin_PP-OCRv5_mobile_rec (lang=es), CPU, detección a ≤1920 px, sin unwarping ni clasificador de orientación",
