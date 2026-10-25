@@ -1,0 +1,7 @@
+# Tarea 2 – Dashboard (app.py)
+# Solo lo necesario para ejecutar la aplicación: lee los CSV de datos/ y la muestra de datos/ejemplos/.
+# PaddleOCR, Whisper, Parakeet, Tesseract y el LLM (Ollama) se ejecutaron en los notebooks, con el entorno del
+# curso Data-Science-Python (uv sync --group docai --group audio), y no hacen falta en el servidor.
+streamlit==1.66.1
+pandas==3.1.0
+plotly==7.1.0
