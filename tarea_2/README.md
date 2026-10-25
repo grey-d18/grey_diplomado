@@ -2,7 +2,7 @@
 
 Python Intermedio · Diplomado en Data Science (QLAB)
 
-**Dashboard en vivo:** *(enlace de Streamlit Community Cloud, pendiente de despliegue)*
+**Dashboard en vivo:** https://voces-documentos-peruanos-grey.streamlit.app
 
 ## 1. Pregunta del proyecto
 
