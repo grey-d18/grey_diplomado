@@ -1,0 +1,67 @@
+id,error,segundos,modelo,tipo,modalidad,metrica,rtf,rol
+doc_001,0.009136592051164915,40.61,PaddleOCR por defecto (línea base),impreso,documento,CER,,línea base
+doc_003,0.03806734992679356,34.47,PaddleOCR por defecto (línea base),impreso,documento,CER,,línea base
+doc_007,0.008519701810436636,11.98,PaddleOCR por defecto (línea base),impreso,documento,CER,,línea base
+doc_010,0.5962962962962963,355.82,PaddleOCR por defecto (línea base),foto,documento,CER,,línea base
+doc_015,0.534688995215311,769.73,PaddleOCR por defecto (línea base),foto,documento,CER,,línea base
+doc_016,0.4432773109243697,272.14,PaddleOCR por defecto (línea base),foto,documento,CER,,línea base
+doc_018,0.43467336683417085,383.03,PaddleOCR por defecto (línea base),manuscrito,documento,CER,,línea base
+doc_025,0.28842105263157897,6.42,PaddleOCR por defecto (línea base),manuscrito,documento,CER,,línea base
+doc_026,0.682983682983683,328.48,PaddleOCR por defecto (línea base),manuscrito,documento,CER,,línea base
+doc_028,0.7373527373527373,27.28,PaddleOCR por defecto (línea base),manuscrito,documento,CER,,línea base
+total,0.31903245072665737,2229.96,PaddleOCR por defecto (línea base),total,documento,CER,,línea base
+doc_001,0.002740977615349475,13.26,PaddleOCR mobile latino (Parte 1),impreso,documento,CER,,Parte 1
+doc_003,0.03733528550512445,8.93,PaddleOCR mobile latino (Parte 1),impreso,documento,CER,,Parte 1
+doc_007,0.021299254526091587,6.22,PaddleOCR mobile latino (Parte 1),impreso,documento,CER,,Parte 1
+doc_010,0.29259259259259257,4.25,PaddleOCR mobile latino (Parte 1),foto,documento,CER,,Parte 1
+doc_015,0.3696172248803828,6.09,PaddleOCR mobile latino (Parte 1),foto,documento,CER,,Parte 1
+doc_016,0.5945378151260504,4.57,PaddleOCR mobile latino (Parte 1),foto,documento,CER,,Parte 1
+doc_018,0.4296482412060301,5.85,PaddleOCR mobile latino (Parte 1),manuscrito,documento,CER,,Parte 1
+doc_025,0.30526315789473685,3.21,PaddleOCR mobile latino (Parte 1),manuscrito,documento,CER,,Parte 1
+doc_026,0.05244755244755245,6.04,PaddleOCR mobile latino (Parte 1),manuscrito,documento,CER,,Parte 1
+doc_028,0.8697158697158697,5.17,PaddleOCR mobile latino (Parte 1),manuscrito,documento,CER,,Parte 1
+total,0.2693609396774836,63.589999999999996,PaddleOCR mobile latino (Parte 1),total,documento,CER,,Parte 1
+doc_001,0.014618547281863865,1.05,Tesseract spa / spa_old,impreso,documento,CER,,otro proyecto
+doc_003,0.04465592972181552,1.04,Tesseract spa / spa_old,impreso,documento,CER,,otro proyecto
+doc_007,0.0724174653887114,0.49,Tesseract spa / spa_old,impreso,documento,CER,,otro proyecto
+doc_010,0.9629629629629629,0.95,Tesseract spa / spa_old,foto,documento,CER,,otro proyecto
+doc_015,0.5322966507177034,1.05,Tesseract spa / spa_old,foto,documento,CER,,otro proyecto
+doc_016,0.5903361344537815,0.73,Tesseract spa / spa_old,foto,documento,CER,,otro proyecto
+doc_018,0.7596314907872697,1.22,Tesseract spa / spa_old,manuscrito,documento,CER,,otro proyecto
+doc_025,0.6905263157894737,0.63,Tesseract spa / spa_old,manuscrito,documento,CER,,otro proyecto
+doc_026,0.6818181818181818,1.55,Tesseract spa / spa_old,manuscrito,documento,CER,,otro proyecto
+doc_028,0.6936936936936937,2.38,Tesseract spa / spa_old,manuscrito,documento,CER,,otro proyecto
+total,0.39498307784192715,11.09,Tesseract spa / spa_old,total,documento,CER,,otro proyecto
+clip_002,0.1836734693877551,30.1,faster-whisper small (línea base),,audio,WER,0.22083639031548055,línea base
+clip_003,0.41333333333333333,8.32,faster-whisper small (línea base),,audio,WER,0.2779819579017708,línea base
+clip_004,0.27586206896551724,3.71,faster-whisper small (línea base),,audio,WER,0.18411910669975187,línea base
+clip_006,0.19170984455958548,29.37,faster-whisper small (línea base),,audio,WER,0.30552376989493396,línea base
+clip_009,0.34523809523809523,12.06,faster-whisper small (línea base),,audio,WER,0.24994818652849743,línea base
+clip_010,0.24203821656050956,14.28,faster-whisper small (línea base),,audio,WER,0.2631772945079248,línea base
+clip_013,0.28780487804878047,21.56,faster-whisper small (línea base),,audio,WER,0.2642156862745098,línea base
+clip_015,0.02702702702702703,9.46,faster-whisper small (línea base),,audio,WER,0.24108053007135577,línea base
+clip_016,0.13333333333333333,11.24,faster-whisper small (línea base),,audio,WER,0.256855575868373,línea base
+clip_018,0.19911504424778761,28.13,faster-whisper small (línea base),,audio,WER,0.2553558460421205,línea base
+total,0.2189430336307481,168.23000000000002,faster-whisper small (línea base),,audio,WER,0.25497893237139657,línea base
+clip_002,0.1292517006802721,76.5,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5612619222303741,Parte 1
+clip_003,0.29333333333333333,24.8,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.828600066822586,Parte 1
+clip_004,0.034482758620689655,12.8,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.6352357320099257,Parte 1
+clip_006,0.10880829015544041,52.6,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5471756995734942,Parte 1
+clip_009,0.17857142857142858,27.4,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5678756476683937,Parte 1
+clip_010,0.10828025477707007,28.9,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5326207150755621,Parte 1
+clip_013,0.08292682926829269,53.1,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.6507352941176471,Parte 1
+clip_015,0.013513513513513514,26.8,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.6829765545361876,Parte 1
+clip_016,0.016666666666666666,28.8,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.6581352833638026,Parte 1
+clip_018,0.07079646017699115,57.0,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5174291938997821,Parte 1
+total,0.1029512697323267,388.7,faster-whisper large-v3-turbo (Parte 1),,audio,WER,0.5891357725302374,Parte 1
+clip_002,0.12585034013605442,46.41,Parakeet TDT 0.6B v3,,audio,WER,0.3404988994864269,otro proyecto
+clip_003,0.48,2.12,Parakeet TDT 0.6B v3,,audio,WER,0.07083194119612429,otro proyecto
+clip_004,0.41379310344827586,0.99,Parakeet TDT 0.6B v3,,audio,WER,0.049131513647642684,otro proyecto
+clip_006,0.18652849740932642,7.51,Parakeet TDT 0.6B v3,,audio,WER,0.07812337459690004,otro proyecto
+clip_009,0.23809523809523808,8.33,Parakeet TDT 0.6B v3,,audio,WER,0.17264248704663213,otro proyecto
+clip_010,0.18471337579617833,38.89,Parakeet TDT 0.6B v3,,audio,WER,0.7167342425359381,otro proyecto
+clip_013,0.9219512195121952,22.2,Parakeet TDT 0.6B v3,,audio,WER,0.2720588235294118,otro proyecto
+clip_015,0.04054054054054054,15.2,Parakeet TDT 0.6B v3,,audio,WER,0.38735983690112125,otro proyecto
+clip_016,0.05,16.17,Parakeet TDT 0.6B v3,,audio,WER,0.3695155393053017,otro proyecto
+clip_018,0.6371681415929203,115.54,Parakeet TDT 0.6B v3,,audio,WER,1.0488380537400146,otro proyecto
+total,0.3514070006863418,273.36,Parakeet TDT 0.6B v3,,audio,WER,0.41431992482342606,otro proyecto

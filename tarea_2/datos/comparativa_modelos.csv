@@ -1,0 +1,7 @@
+modalidad,rol,modelo,metrica,error,mediana_por_caso,segundos,seg_por_caso,rtf,equipo,configuracion
+documento,línea base,PaddleOCR por defecto (línea base),CER,0.31903245072665737,0.4389753388792703,2229.96,222.996,,CPU,"PaddleOCR 3.7.0 · lang=es, valores por defecto, CPU"
+documento,Parte 1,PaddleOCR mobile latino (Parte 1),CER,0.2693609396774836,0.2989278752436647,63.589999999999996,6.359,,CPU,"PaddleOCR 3.7.0 · PP-OCRv5_mobile_det + latin_PP-OCRv5_mobile_rec (lang=es), CPU, detección a ≤1920 px, sin unwarping ni clasificador de orientación"
+documento,otro proyecto,Tesseract spa / spa_old,CER,0.39498307784192715,0.6360771581359816,11.09,1.109,,CPU,"tesseract 5.5.3 · LSTM, spa (manuscritos: spa_old), psm 3"
+audio,línea base,faster-whisper small (línea base),WER,0.2189430336307481,0.2205766304041486,168.23000000000002,16.823,0.25497893237139657,CPU,"faster-whisper 1.2.1 · Whisper small, int8, CPU 3 hilos, language=es, VAD on"
+audio,Parte 1,faster-whisper large-v3-turbo (Parte 1),WER,0.1029512697323267,0.09560354202268137,388.7,38.87,0.5891357725302374,CPU,"faster-whisper 1.2.1 · Whisper large-v3-turbo (mobiuslabsgmbh/faster-whisper-large-v3-turbo), int8, CPU 3 hilos, beam 5, language=es, VAD Silero on (silencio 0,3 s), condition_on_previous_text=False"
+audio,otro proyecto,Parakeet TDT 0.6B v3,WER,0.3514070006863418,0.21231186775228225,273.36,27.336000000000002,0.41431992482342606,GPU (MLX),"parakeet-mlx 0.5.3 · mlx-community/parakeet-tdt-0.6b-v3, GPU Apple (MLX), trozos de 120 s"

@@ -1,0 +1,47 @@
+id,licencia,publicable,archivo_publico,motivo_no_publicable
+doc_001,Dominio público,True,datos/ejemplos/doc_001.jpg,
+doc_002,Dominio público,False,,datos personales (3 seudónimos en el texto)
+doc_003,Dominio público,True,datos/ejemplos/doc_003.jpg,
+doc_004,Dominio público,True,datos/ejemplos/doc_004.jpg,
+doc_005,Dominio público,True,datos/ejemplos/doc_005.jpg,
+doc_006,Dominio público,False,,datos personales (1 seudónimos en el texto)
+doc_007,Dominio público,True,datos/ejemplos/doc_007.jpg,
+doc_008,Dominio público,False,,datos personales (13 seudónimos en el texto)
+doc_009,CC BY-SA 2.0,True,datos/ejemplos/doc_009.jpg,
+doc_010,CC BY-SA 2.0,True,datos/ejemplos/doc_010.jpg,
+doc_011,CC BY-SA 2.0,True,datos/ejemplos/doc_011.jpg,
+doc_014,CC BY 2.0,True,datos/ejemplos/doc_014.jpg,
+doc_015,CC BY-SA 4.0,True,datos/ejemplos/doc_015.jpg,
+doc_016,CC BY-SA 4.0,False,,datos personales (6 seudónimos en el texto)
+doc_017,Dominio público,True,datos/ejemplos/doc_017.jpg,
+doc_018,Dominio público,True,datos/ejemplos/doc_018.jpg,
+doc_019,Dominio público,True,datos/ejemplos/doc_019.jpg,
+doc_020,Dominio público,True,datos/ejemplos/doc_020.jpg,
+doc_021,Dominio público,True,datos/ejemplos/doc_021.jpg,
+doc_022,Dominio público,True,datos/ejemplos/doc_022.jpg,
+doc_025,CC BY-SA 4.0,False,,datos personales (18 seudónimos en el texto)
+doc_026,Dominio público,True,datos/ejemplos/doc_026.jpg,
+doc_027,CC BY-SA 4.0,True,datos/ejemplos/doc_027.jpg,
+doc_028,CC BY-SA 3.0,True,datos/ejemplos/doc_028.jpg,
+doc_029,CC BY 2.0,True,datos/ejemplos/doc_029.jpg,
+clip_001,CC BY-SA 4.0,False,,datos personales (10 seudónimos en el texto)
+clip_002,CC BY-SA 4.0,False,,datos personales (4 seudónimos en el texto)
+clip_003,CC BY-SA 4.0,True,datos/ejemplos/clip_003.mp3,
+clip_004,CC BY-SA 4.0,True,datos/ejemplos/clip_004.mp3,
+clip_005,CC BY-SA 4.0,False,,datos personales (4 seudónimos en el texto)
+clip_006,CC BY-SA 4.0,False,,datos personales (6 seudónimos en el texto)
+clip_007,CC BY-SA 4.0,False,,datos personales (1 seudónimos en el texto)
+clip_008,CC BY-SA 4.0,False,,datos personales (3 seudónimos en el texto)
+clip_009,CC BY-SA 4.0,False,,datos personales (2 seudónimos en el texto)
+clip_010,CC BY-SA 4.0,False,,datos personales (2 seudónimos en el texto)
+clip_011,CC BY-SA 4.0,False,,datos personales (2 seudónimos en el texto)
+clip_012,CC BY-SA 4.0,False,,datos personales (2 seudónimos en el texto)
+clip_013,CC BY-SA 4.0,False,,datos personales (2 seudónimos en el texto)
+clip_015,CC BY-SA 4.0,True,datos/ejemplos/clip_015.mp3,
+clip_016,CC BY 4.0,True,datos/ejemplos/clip_016.mp3,
+clip_017,CC BY 4.0,True,datos/ejemplos/clip_017.mp3,
+clip_018,CC BY 4.0,True,datos/ejemplos/clip_018.mp3,
+clip_019,CC BY 4.0,True,datos/ejemplos/clip_019.mp3,
+clip_020,CC BY 4.0,True,datos/ejemplos/clip_020.mp3,
+clip_021,CC BY 4.0,False,,datos personales (1 seudónimos en el texto)
+clip_022,CC BY 4.0,True,datos/ejemplos/clip_022.mp3,

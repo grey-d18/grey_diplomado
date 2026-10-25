@@ -1,0 +1,13 @@
+# Corpus original (se recupera con scrapeo/datos.py, ver datos/fuentes.csv)
+datos/raw/
+
+# Entorno y pesos de modelos
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+modelos/*.safetensors
+modelos/*.bin
+modelos/*.pt
+modelos/*.onnx
+modelos/checkpoint-*/
+.DS_Store

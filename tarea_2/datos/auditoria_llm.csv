@@ -1,0 +1,111 @@
+id,modalidad,campo,valor_llm,correcto,comentario
+doc_001,documento,tema,decreto de estado de emergencia,1,
+doc_001,documento,resumen,El presidente declara estado de emergencia nacional por el brote del COVID-19.,1,
+doc_001,documento,tipo_documento,decreto supremo,1,
+doc_001,documento,emisor,EL PRESIDENTE DE LA REPÚBLICA,1,
+doc_001,documento,fecha,,1,
+doc_001,documento,lugar,,1,
+doc_001,documento,monto,,1,
+doc_002,documento,tema,modificación decreto supremo,1,"El texto trata dos temas (Reactiva Perú y la prórroga de la emergencia): no se equivoca, pero es insuficiente"
+doc_002,documento,resumen,"El decreto supremo modifica el artículo 3 del decreto supremo 051-2020-PCM, prorrogando el estado de emergencia nacional por el COVID-19.",1,"Fiel pero insuficiente: no menciona el Decreto Legislativo de Reactiva Perú, que ocupa la mitad de la página"
+doc_002,documento,tipo_documento,Decreto Supremo,1,
+doc_002,documento,emisor,El Presidente de la República,1,
+doc_002,documento,fecha,No especificada en el texto,0,El texto dice «Lunes 6 de abril de 2020» y «a los seis días del mes de abril»; además debió usar null en vez de un texto
+doc_002,documento,lugar,Lima,1,
+doc_002,documento,monto,,1,
+doc_006,documento,tema,decreto de urgencia coronavirus,1,
+doc_006,documento,resumen,Se establecen medidas excepcionales para prevenir la propagación del Coronavirus en el Perú.,1,
+doc_006,documento,tipo_documento,decreto de urgencia,1,
+doc_006,documento,emisor,Poder Ejecutivo,1,
+doc_006,documento,fecha,Domingo 15 de marzo de 2020,1,
+doc_006,documento,lugar,,1,
+doc_006,documento,monto,,1,
+doc_009,documento,tema,reorganización de la primera,0,Inventado a partir de un texto que no se puede entender
+doc_009,documento,resumen,Se hace referencia a una reorganización de la primera en el documento.,0,Inventado
+doc_009,documento,tipo_documento,decreto,0,"Es una lámina dibujada, no un decreto"
+doc_009,documento,emisor,,1,
+doc_009,documento,fecha,,1,
+doc_009,documento,lugar,,1,
+doc_009,documento,monto,,1,
+doc_010,documento,tema,procedimiento administrativo,0,Es una lámina sobre castigo y justicia con una oración en quechua
+doc_010,documento,resumen,Se describe un procedimiento administrativo relacionado con la SAVI y la UANAZAC,0,Inventado
+doc_010,documento,tipo_documento,documenio,0,"«documenio» es una palabra deformada por el OCR, no un dato"
+doc_010,documento,emisor,CAS TIGONSTICIA,0,"Mala inferencia por mal reconocimiento: es la leyenda «CASTIGO, JUSTICIA» de la lámina, no un emisor"
+doc_010,documento,fecha,,1,
+doc_010,documento,lugar,,1,
+doc_010,documento,monto,,1,
+doc_029,documento,tema,documentos de embarcación,1,
+doc_029,documento,resumen,Se detalla el estado general de una embarcación y sus componentes.,1,
+doc_029,documento,tipo_documento,documento,1,
+doc_029,documento,emisor,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_029,documento,fecha,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_029,documento,lugar,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_029,documento,monto,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_015,documento,tema,cuidado personal durante la pandemia,1,
+doc_015,documento,resumen,La Facultad de Ciencias Sociales invita a los estudiantes a seguir medidas de cuidado personal para prevenir el COVID-19.,1,
+doc_015,documento,tipo_documento,comunicado,1,
+doc_015,documento,emisor,Facultad de Ciencias Sociales,1,
+doc_015,documento,fecha,,1,
+doc_015,documento,lugar,,1,
+doc_015,documento,monto,,1,
+doc_018,documento,tema,proceso judicial,0,El texto describe la situación local de la provincia de Saña
+doc_018,documento,resumen,Un decreto judicial ordena medidas contra una persona por delitos sociales.,0,El texto describe la situación local de la provincia de Saña
+doc_018,documento,tipo_documento,decreto,0,
+doc_018,documento,emisor,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_018,documento,fecha,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_018,documento,lugar,,0,"Aparecen «Saña», «Reino del Perú» y «Tumbes»"
+doc_018,documento,monto,,1,El LLM escribió null como texto en lugar del vacío que pide el formato
+doc_026,documento,tema,obispados y misiones,1,
+doc_026,documento,resumen,El documento describe diversos obispados y misiones en diferentes regiones de América del Sur.,1,
+doc_026,documento,tipo_documento,documento,1,
+doc_026,documento,emisor,,1,
+doc_026,documento,fecha,,1,
+doc_026,documento,lugar,,1,
+doc_026,documento,monto,,1,
+doc_027,documento,tema,Huaca Melgarejo,1,
+doc_027,documento,resumen,"Es un sitio arqueológico y histórico en La Molina, Perú, que fue construido por la Cultura Lima y luego ampliado por la Cultura Ichma.",1,
+doc_027,documento,tipo_documento,declaración,0,Es un panel informativo; tomó «Declarado Patrimonio…» como tipo de documento
+doc_027,documento,emisor,Municipalidad de La Molina,1,
+doc_027,documento,fecha,27 de marzo de 2002,1,
+doc_027,documento,lugar,"La Molina, Perú",1,
+doc_027,documento,monto,,1,
+clip_001,audio,tema,entrevista fútbol,1,
+clip_001,audio,resumen,Entrevista sobre el fútbol como unión de masas en Perú.,1,
+clip_001,audio,numero_hablantes,3,1,
+clip_001,audio,lugar,,1,
+clip_002,audio,tema,opinión sobre un partido de fútbol,1,
+clip_002,audio,resumen,El entrevistador pregunta a una persona sobre sus expectativas y opiniones sobre un partido de fútbol.,1,
+clip_002,audio,numero_hablantes,2,1,
+clip_002,audio,lugar,,1,
+clip_004,audio,tema,sentimientos ante resultados de partidos de Perú,1,
+clip_004,audio,resumen,"El hablante 1 expresa su estado emocional ante resultados de partidos de Perú, mientras que el hablante 2 explica cómo se siente ante resultados adversos.",0,Confunde los papeles: el hablante 1 solo pregunta y el hablante 2 responde
+clip_004,audio,numero_hablantes,2,1,Se escucha a dos personas conversar
+clip_004,audio,lugar,,1,
+clip_006,audio,tema,significado del perú para el entrevistado,1,
+clip_006,audio,resumen,"El entrevistado considera que el Perú es la tierra donde nació y se desarrolló, pero también ve malas funciones en la política.",1,
+clip_006,audio,numero_hablantes,2,1,
+clip_006,audio,lugar,,1,
+clip_009,audio,tema,desayuno y congreso,0,Es una arenga de protesta dirigida a congresistas; «desayuno» es un detalle sacado de contexto
+clip_009,audio,resumen,Se habla sobre el desayuno y la convocatoria para un congreso.,0,Malinterpreta el grito de protesta como una convocatoria a un congreso
+clip_009,audio,numero_hablantes,4,0,"Se escucha una sola voz: hay una multitud, pero solo se distingue a la persona que arenga"
+clip_009,audio,lugar,,1,
+clip_012,audio,tema,entrevista juventud,1,
+clip_012,audio,resumen,La entrevista aborda consejos para la juventud y la marcha realizada.,1,
+clip_012,audio,numero_hablantes,9,1,"La transcripción tiene 9 etiquetas de hablante (la sobresegmentación es del ASR, no del LLM)"
+clip_012,audio,lugar,,1,
+clip_017,audio,tema,infancia y cambio económico,1,
+clip_017,audio,resumen,"La infancia del hablante fue agradable, aunque hubo carencias en el tema agrícola. Se cambió de la coca a la cacao como alternativa de cultivo.",1,
+clip_017,audio,numero_hablantes,1,1,
+clip_017,audio,lugar,zona roja,0,«Zona roja» describe la zona donde vivía; no nombra un lugar
+clip_018,audio,tema,historia de cine en Lima,1,
+clip_018,audio,resumen,"El hablante describe su experiencia con los cines de Lima, incluyendo preferencias y experiencias personales.",1,
+clip_018,audio,numero_hablantes,1,1,
+clip_018,audio,lugar,Lima,1,
+clip_019,audio,tema,recuerdos de cines,1,
+clip_019,audio,resumen,"El hablante describe sus recuerdos de cines que ya no existen, enfatizando en los cines de San Miguel y el Callao.",1,
+clip_019,audio,numero_hablantes,1,1,
+clip_019,audio,lugar,San Miguel y Callao,1,
+clip_020,audio,tema,historia del cine en Perú,0,"Generaliza: es el recuerdo personal de su primera vez en el cine, no una historia del cine"
+clip_020,audio,resumen,"El hablante describe su primera experiencia en el cine en el Callao, Perú.",1,
+clip_020,audio,numero_hablantes,2,1,"La transcripción tiene [HABLANTE_2] «Gracias.» al final (error del ASR, no del LLM)"
+clip_020,audio,lugar,"Calleo, Perú",0,El texto dice «cine Callao» (nombre de la sala) y el LLM escribió «Calleo»
