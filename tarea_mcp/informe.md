@@ -78,5 +78,6 @@ Abrir `claude` en esta carpeta y aprobar los servidores `bcrp` y `fetch` de `.mc
 | Recurso (`@`) | `@bcrp:bcrp://serie/PN01273PM ¿desde cuándo hay datos de esta serie?` | Desde enero de 1950 |
 | Prompt (`/`) | `/bcrp:informe inflación` | Cinco viñetas, cada una con su código de serie y periodo |
 
-En Claude Code 2.1.312 el prompt se llama `/bcrp:informe`. Las versiones anteriores, y el README del curso, lo
-llaman `/mcp__bcrp__informe`.
+En Claude Code 2.1.312 el menú muestra el prompt como `/bcrp:informe`; también acepta `/mcp__bcrp__informe`, el
+nombre que usa el README del curso. El tema va en la misma línea: sin él, Claude Code responde
+`Missing required argument: tema`.
