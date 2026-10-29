@@ -66,3 +66,17 @@ uv run pytest -q          # 8 passed
 uv run evaluar.py         # escribe resultados.csv
 uv run grafico.py         # escribe grafico.png
 ```
+
+## Probarlo en Claude Code
+
+Abrir `claude` en esta carpeta y aprobar los servidores `bcrp` y `fetch` de `.mcp.json`. Luego:
+
+| Qué se prueba | Qué escribir | Qué debería responder |
+|---|---|---|
+| Servidores | `/mcp` | `bcrp` y `fetch` conectados |
+| Herramienta | ¿Cuál fue la inflación de Lima a 12 meses en setiembre de 2026? | 4.55 %, serie PN01273PM |
+| Recurso (`@`) | `@bcrp:bcrp://serie/PN01273PM ¿desde cuándo hay datos de esta serie?` | Desde enero de 1950 |
+| Prompt (`/`) | `/bcrp:informe inflación` | Cinco viñetas, cada una con su código de serie y periodo |
+
+En Claude Code 2.1.312 el prompt se llama `/bcrp:informe`. Las versiones anteriores, y el README del curso, lo
+llaman `/mcp__bcrp__informe`.
