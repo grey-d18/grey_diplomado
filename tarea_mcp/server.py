@@ -202,6 +202,18 @@ def ficha(codigo: str) -> dict:
     return _ficha(codigo)
 
 
+# Un recurso fijo, además de la plantilla: es el que Claude Code ofrece al escribir @ y adjunta a la conversación.
+SERIES_CLAVE = ["PN01273PM", "PN01271PM", "PD04722MM", "PD04638PD", "PN00027MM", "PN38784BM", "PM04923AA",
+                "PN38793BM", "PN38063GM"]
+
+
+@mcp.resource("bcrp://series-clave")
+def series_clave() -> list[dict]:
+    """Fichas de las series del BCRP más consultadas: inflación, tasa de referencia, tipo de cambio, reservas,
+    cobre, oro, PBI y desempleo. Adjúntenla con @ para que Claude tenga los códigos sin tener que buscarlos."""
+    return [_ficha(c) for c in SERIES_CLAVE]
+
+
 # TODO 5 · Prompt: un informe en el que cada cifra se pueda rastrear
 @mcp.prompt
 def informe(tema: str) -> str:
