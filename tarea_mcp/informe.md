@@ -75,8 +75,12 @@ Abrir `claude` en esta carpeta y aprobar los servidores `bcrp` y `fetch` de `.mc
 |---|---|---|
 | Servidores | `/mcp` | `bcrp` y `fetch` conectados |
 | Herramienta | ¿Cuál fue la inflación de Lima a 12 meses en setiembre de 2026? | 4.55 %, serie PN01273PM |
-| Recurso (`@`) | `@bcrp:bcrp://serie/PN01273PM ¿desde cuándo hay datos de esta serie?` | Desde enero de 1950 |
+| Recurso (`@`) | `@bcrp:bcrp://series-clave ¿desde cuándo hay datos de la serie de inflación a 12 meses?` | Desde enero de 1950, con «Read MCP resource series_clave» |
 | Prompt (`/`) | `/bcrp:informe inflación` | Cinco viñetas, cada una con su código de serie y periodo |
+
+El `@` usa el recurso fijo `bcrp://series-clave`. La plantilla `bcrp://serie/{codigo}` funciona desde Python, pero
+al escribirla a mano con `@` Claude Code no adjuntó su contenido; un recurso fijo sí aparece en el autocompletado y
+se adjunta. Las capturas de estas pruebas están en `evidencias/`.
 
 En Claude Code 2.1.312 el menú muestra el prompt como `/bcrp:informe`; también acepta `/mcp__bcrp__informe`, el
 nombre que usa el README del curso. El tema va en la misma línea: sin él, Claude Code responde
